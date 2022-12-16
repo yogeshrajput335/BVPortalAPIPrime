@@ -14,8 +14,7 @@ using Microsoft.EntityFrameworkCore;
 namespace BVPortalApi.Controllers
 {
     [ApiController]
-    //[Route("api/[controller]"), Authorize(Roles = "ADMIN")]
-    [Route("api/[controller]")]
+    [Route("api/[controller]"), Authorize(Roles = "ADMIN")]
     public class AssetTypeController : ControllerBase
     {
         private readonly BVContext DBContext;
