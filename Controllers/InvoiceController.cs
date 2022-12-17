@@ -191,5 +191,16 @@ namespace BVPortalApi.Controllers
             await DBContext.SaveChangesAsync();
             return HttpStatusCode.OK;
         }
+
+        [HttpPost("DeleteInvoices")]
+        public  async Task<HttpStatusCode> DeleteInvoices(List<InvoiceDTO> Assets) {
+            List<Invoice> entities = Assets.Select(i => new Invoice(){
+                Id = i.Id
+            }).ToList();
+            DBContext.Invoice.AttachRange(entities);
+            DBContext.Invoice.RemoveRange(entities);
+            await DBContext.SaveChangesAsync();
+            return HttpStatusCode.OK;
+        }
     }
 }
