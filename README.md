@@ -38,8 +38,8 @@ Password : 123456789
 
 # EMAIL SERVICE
 
-* https://jasonwatmore.com/post/2022/03/11/net-6-send-an-email-via-smtp-with-mailkit
-* https://ethereal.email/ > jedidiah.hamill63@ethereal.email (uq1xRSC6FzCehSU1dA)
+* https://codewithmukesh.com/blog/send-emails-with-aspnet-core/
+* https://stackoverflow.com/questions/72470777/nodemailer-response-535-5-7-8-username-and-password-not-accepted
 
 # Entity Framework
 * https://www.entityframeworktutorial.net/code-first/configure-many-to-many-relationship-in-code-first.aspx
