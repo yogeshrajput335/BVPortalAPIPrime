@@ -87,6 +87,17 @@ namespace BVPortalApi.Controllers
             return HttpStatusCode.OK;
         }
 
+        [HttpPost("DeleteEmployees")]
+        public  async Task<HttpStatusCode> DeleteEmployee(List<EmployeeDTO> Employees) {
+            List<Employee> entities = Employees.Select(i => new Employee(){
+                Id = i.Id
+            }).ToList();
+            DBContext.Employee.AttachRange(entities);
+            DBContext.Employee.RemoveRange(entities);
+            await DBContext.SaveChangesAsync();
+            return HttpStatusCode.OK;
+        }
+
         [HttpPost("SetClientPerHour/{Id}/{perHour}/{client}")]
         public async Task<HttpStatusCode> SetClientPerHour(int Id, int perHour, int client,[FromBody] SetTermDTO setTerm)
         {
