@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using BVPortalApi.CommonFeatures;
-using BVPortalApi.CommonFeatures.Contracts;
 using BVPortalApi.DTO;
 using BVPortalApi.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -188,6 +186,17 @@ namespace BVPortalApi.Controllers
             };
             DBContext.Invoice.Attach(entity);
             DBContext.Invoice.Remove(entity);
+            await DBContext.SaveChangesAsync();
+            return HttpStatusCode.OK;
+        }
+
+        [HttpPost("DeleteInvoices")]
+        public  async Task<HttpStatusCode> DeleteInvoices(List<InvoiceDTO> Assets) {
+            List<Invoice> entities = Assets.Select(i => new Invoice(){
+                Id = i.Id
+            }).ToList();
+            DBContext.Invoice.AttachRange(entities);
+            DBContext.Invoice.RemoveRange(entities);
             await DBContext.SaveChangesAsync();
             return HttpStatusCode.OK;
         }

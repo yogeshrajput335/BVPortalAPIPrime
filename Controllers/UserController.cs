@@ -6,8 +6,6 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using BVPortalApi.CommonFeatures;
-using BVPortalApi.CommonFeatures.Contracts;
 using BVPortalApi.DTO;
 using BVPortalApi.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -22,12 +20,10 @@ namespace BVPortalApi.Controllers
     public class UserController : ControllerBase
     {
         private readonly BVContext DBContext;
-        private readonly IEmailService emailService;
 
-        public UserController(BVContext DBContext,IEmailService emailService)
+        public UserController(BVContext DBContext)
         {
             this.DBContext = DBContext;
-            this.emailService = emailService;
         }
 
         [HttpGet("GetUsers"), Authorize(Roles = "ADMIN")]

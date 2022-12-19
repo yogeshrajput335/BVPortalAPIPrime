@@ -1,9 +1,12 @@
 using System.Text;
-using BVPortalApi.CommonFeatures;
-using BVPortalApi.CommonFeatures.Contracts;
+
+
 using BVPortalApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using BVPortalAPIPrime.Settings;
+using System.Configuration;
+using BVPortalAPIPrime.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,12 +39,13 @@ builder.Services.AddAuthentication(opt => {
 });
 // Add services to the container.
 builder.Services.AddScoped<BVContext, BVContext>();
-builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddTransient<IMailService, MailService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 
 var app = builder.Build();
 
