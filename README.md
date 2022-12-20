@@ -18,15 +18,6 @@ dotnet ef database update
 dotnet ef database update YourMigrationName
 ```
 
-# XAMPP
-![Alt text](./Images/XAMPP_ControlPanel.jpg?raw=true "XAMPP Control Panel")
-```
-Download XAMPP from below link
-https://www.apachefriends.org/
-Start Apache & MySql
-Click ADMIN from Control Panel or http://localhost/phpmyadmin/ in Browser
-```
-
 # SQL SERVER 
 ```
 Server Name : DESKTOP-BPFI2DP\\SQLEXPRESS
@@ -34,7 +25,6 @@ Database name : blueverseportalprimedb
 Username : sa
 Password : 123456789
 ```
-![Alt text](./Images/CreateServerUser.jpg?raw=true "Create Server User")
 
 # EMAIL SERVICE
 
