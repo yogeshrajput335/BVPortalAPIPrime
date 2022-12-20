@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BVPortalAPIPrime.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BVPortalApi.Models
@@ -48,6 +49,11 @@ namespace BVPortalApi.Models
         public DbSet<ClientTermHistory> ClientTermHistory { get; set; }
         public DbSet<EmpClientPerHour> EmpClientPerHour { get; set; }
         public DbSet<EmpClientPerHourHistory> EmpClientPerHourHistory { get; set; }
+        public DbSet<Company> Company { get; set; }
+        public DbSet<Customer> Customer { get; set; }
+        public DbSet<Product> Product { get; set; }
+        public DbSet<Service> Service { get; set; }
+        public DbSet<PaymentOption> PaymentOption { get; set; }
 
     }
 }

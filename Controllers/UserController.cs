@@ -149,7 +149,7 @@ namespace BVPortalApi.Controllers
                     issuer: "https://localhost:7037",
                     audience: "http://localhost:4200",
                     claims: claims,
-                    expires: DateTime.Now.AddMinutes(5),
+                    expires: DateTime.Now.AddMinutes(60),
                     signingCredentials: signinCredentials
                 );
                 var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
