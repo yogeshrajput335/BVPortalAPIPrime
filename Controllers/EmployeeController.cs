@@ -181,5 +181,26 @@ namespace BVPortalApi.Controllers
                 return List;
             }
         }
+        [HttpGet("GetEmployeeForDropdown")]
+        public async Task<ActionResult<List<EmployeeDTO>>> GetEmployeeForDropdown()
+        {
+
+            var List = await DBContext.Employee.Where(x=>x.Status.ToLower() == "active" && x.User == null).Select(
+                s => new EmployeeDTO
+                {
+                    Id = s.Id,
+                    FullName = s.LastName+", "+s.FirstName,
+                }
+            ).ToListAsync();
+            
+            if (List.Count < 0)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return List;
+            }
+        }
     }
 }
