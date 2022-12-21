@@ -31,6 +31,7 @@ namespace BVPortalApi.Controllers
                     Id = s.Id,
                     FirstName = s.FirstName,
                     LastName = s.LastName,
+                    Name = s.LastName+", "+s.FirstName,
                     PhoneNo = s.PhoneNo,
                     Email=s.Email,
                     Status = s.Status,

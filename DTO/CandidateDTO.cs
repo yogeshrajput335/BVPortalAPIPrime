@@ -27,6 +27,7 @@ namespace BVPortalApi.DTO
         public string? Vendor{ get; set; }
         public string? VendorContact { get; set; }
         public string? VendorMail{ get; set; }
+        public string? Name{ get; set; }
         public DateTime? CreatedDate{ get; set; }
     }
 }
