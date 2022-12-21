@@ -29,12 +29,17 @@ namespace BVPortalApi.Controllers
                 s => new InvoiceProductDTO
                 {
                     Id = s.Id,
+                    ProductId = s.ProductId,
+                    ServiceId = s.ServiceId,
                     InvoiceId = s.InvoiceId,
-                    EmployeeId = s.EmployeeId,
-                    ProjectId = s.ProjectId,
-                    PerHourCost = s.PerHourCost,
-                    TotalHours = s.TotalHours,
-                    TotalCost = s.TotalCost,
+                    ItemTypeId = s.ItemTypeId,
+                    Unit = s.Unit,
+                    Rate = s.Rate,
+                    Quantity = s.Quantity,
+                    Total = s.Total,
+                    Product = s.Product.ProductName,
+                    Service = s.Service.ServiceName,
+                    IsProduct = s.IsProduct
                 }
             ).ToListAsync();
             
@@ -51,12 +56,15 @@ namespace BVPortalApi.Controllers
         [HttpPost("InsertInvoiceProduct")]
         public async Task < HttpStatusCode > InsertInvoiceProduct(InvoiceProductDTO s) {
             var entity = new InvoiceProduct() {
+                    ProductId = s.ProductId,
+                    ServiceId = s.ServiceId,
                     InvoiceId = s.InvoiceId,
-                    EmployeeId = s.EmployeeId,
-                    ProjectId = s.ProjectId,
-                    PerHourCost = s.PerHourCost,
-                    TotalHours = s.TotalHours,
-                    TotalCost = s.TotalCost,
+                    ItemTypeId = s.ItemTypeId,
+                    Unit = s.Unit,
+                    Rate = s.Rate,
+                    Quantity = s.Quantity,
+                    Total = s.Total,
+                    IsProduct = s.IsProduct
             };
             DBContext.InvoiceProduct.Add(entity);
             await DBContext.SaveChangesAsync();
@@ -64,14 +72,17 @@ namespace BVPortalApi.Controllers
         }
 
         [HttpPut("InvoiceProduct")]
-        public async Task<HttpStatusCode> UpdateInvoiceProduct(InvoiceProductDTO InvoiceProduct) {
-            var entity = await DBContext.InvoiceProduct.FirstOrDefaultAsync(s => s.Id == InvoiceProduct.Id);
-            entity.InvoiceId = InvoiceProduct.InvoiceId;
-            entity.EmployeeId = InvoiceProduct.EmployeeId;
-            entity.ProjectId = InvoiceProduct.ProjectId;
-            entity.PerHourCost = InvoiceProduct.PerHourCost;
-            entity.TotalHours = InvoiceProduct.TotalHours ;
-            entity.TotalCost = InvoiceProduct.TotalCost;
+        public async Task<HttpStatusCode> UpdateInvoiceProduct(InvoiceProductDTO s) {
+            var entity = await DBContext.InvoiceProduct.FirstOrDefaultAsync(x => x.Id == s.Id);
+            entity.ProductId = s.ProductId;
+            entity.ServiceId = s.ServiceId;
+            entity.InvoiceId = s.InvoiceId;
+            entity.ItemTypeId = s.ItemTypeId;
+            entity.Unit = s.Unit;
+            entity.Rate = s.Rate;
+            entity.Quantity = s.Quantity;
+            entity.Total = s.Total;
+            entity.IsProduct = s.IsProduct;
             await DBContext.SaveChangesAsync();
             return HttpStatusCode.OK;
         }

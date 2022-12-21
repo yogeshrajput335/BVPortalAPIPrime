@@ -11,13 +11,15 @@ namespace BVPortalApi.Models
     {
         public int Id { get; set; }
         public int? InvoiceId { get; set; }
-        public int? EmployeeId { get; set; }
-        public int? ProjectId { get; set; }
-        public float PerHourCost { get; set; }
-        public int TotalHours { get; set; }
-        public float TotalCost { get; set; }
-        public string? Employee { get; set; }
-        public string? Project { get; set; }
-        public string? ProjectType { get; set; }
+        public int? ProductId { get; set; }
+        public int? ServiceId { get; set; }
+        public string? ItemTypeId { get; set; }
+        public string? Unit { get; set; }
+        public float Quantity { get; set; }
+        public float Rate { get; set; }
+        public float Total { get; set; }
+        public string? Product { get; set; }
+        public string? Service { get; set; }
+        public bool IsProduct { get; set; }
     }    
 }

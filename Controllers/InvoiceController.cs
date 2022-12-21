@@ -29,29 +29,38 @@ namespace BVPortalApi.Controllers
                 s => new InvoiceDTO
                 {
                     Id = s.Id,
-                    InvoiceNo = s.InvoiceNo,
-                    CreatedDate = s.CreatedDate,
-                    DueDate = s.DueDate,
-                    ClientId = s.ClientId,
-                    ClientName = s.Client.ClientName,
-                    FromLine1 = s.FromLine1,
-                    FromLine2 = s.FromLine2,
-                    FromLine3 = s.FromLine3,
+                    InvoiceNumber = s.InvoiceNumber,
+                    InvoiceDate = s.InvoiceDate,
                     Term = s.Term,
+                    DueDate = s.DueDate,
+                    CompanyId = s.CompanyId,
+                    CompanyName = s.CompanyName,
+                    CompanyAddressLine1 = s.CompanyAddressLine1,
+                    CompanyAddressLine2 = s.CompanyAddressLine2,
+                    CompanyAddressLine3 = s.CompanyAddressLine3,
+                    CompanyPhoneNumber = s.CompanyPhoneNumber,
+                    CompanyEmailAddress = s.CompanyEmailAddress,
+                    CustomerId = s.CustomerId,
+                    CustomerName = s.CustomerName,
+                    CustomerAddressLine1 = s.CustomerAddressLine1,
+                    CustomerAddressLine2 = s.CustomerAddressLine2,
+                    CustomerAddressLine3 = s.CustomerAddressLine3,
                     Status = s.Status,
                     Products =  (DBContext.InvoiceProduct.Where(x=>x.InvoiceId == s.Id).Select(
                     s => new InvoiceProductDTO
                     {
                         Id = s.Id,
-                        EmployeeId = s.EmployeeId,
-                        ProjectId = s.ProjectId,
+                        ProductId = s.ProductId,
+                        ServiceId = s.ServiceId,
                         InvoiceId = s.InvoiceId,
-                        Employee = s.Employee.FirstName+" "+s.Employee.LastName,
-                        Project = s.Project.ProjectName,
-                        ProjectType = s.Project.ProjectType,
-                        PerHourCost = s.PerHourCost,
-                        TotalHours = s.TotalHours,
-                        TotalCost = s.TotalCost,
+                        ItemTypeId = s.ItemTypeId,
+                        Unit = s.Unit,
+                        Rate = s.Rate,
+                        Quantity = s.Quantity,
+                        Total = s.Total,
+                        Product = s.Product.ProductName,
+                        Service = s.Service.ServiceName,
+                        IsProduct = s.IsProduct
                     }).ToList() )               
                 }
             ).ToListAsync();
@@ -73,21 +82,23 @@ namespace BVPortalApi.Controllers
                 s => new InvoiceDTO
                 {
                     Id = s.Id,
-                    InvoiceNo = s.InvoiceNo,
-                    CreatedDate = s.CreatedDate,
-                    DueDate = s.DueDate,
-                    ClientId = s.ClientId,
-                    ClientName = s.Client.ClientName,
-                    FromLine1 = s.FromLine1,
-                    FromLine2 = s.FromLine2,
-                    FromLine3 = s.FromLine3,
+                    InvoiceNumber = s.InvoiceNumber,
+                    InvoiceDate = s.InvoiceDate,
                     Term = s.Term,
+                    DueDate = s.DueDate,
+                    CompanyId = s.CompanyId,
+                    CompanyName = s.CompanyName,
+                    CompanyAddressLine1 = s.CompanyAddressLine1,
+                    CompanyAddressLine2 = s.CompanyAddressLine2,
+                    CompanyAddressLine3 = s.CompanyAddressLine3,
+                    CompanyPhoneNumber = s.CompanyPhoneNumber,
+                    CompanyEmailAddress = s.CompanyEmailAddress,
+                    CustomerId = s.CustomerId,
+                    CustomerName = s.CustomerName,
+                    CustomerAddressLine1 = s.CustomerAddressLine1,
+                    CustomerAddressLine2 = s.CustomerAddressLine2,
+                    CustomerAddressLine3 = s.CustomerAddressLine3,
                     Status = s.Status,
-                    // Products = s.InvoiceProduct.Select(s => new InvoiceDTO
-                    //             {
-                    //                 Emploe
-                    //             })
-
                 }
             ).FirstOrDefaultAsync();
             
@@ -101,15 +112,17 @@ namespace BVPortalApi.Controllers
                 s => new InvoiceProductDTO
                 {
                     Id = s.Id,
-                    EmployeeId = s.EmployeeId,
-                    ProjectId = s.ProjectId,
+                    ProductId = s.ProductId,
+                    ServiceId = s.ServiceId,
                     InvoiceId = s.InvoiceId,
-                    Employee = s.Employee.FirstName+" "+s.Employee.LastName,
-                    Project = s.Project.ProjectName,
-                    ProjectType = s.Project.ProjectType,
-                    PerHourCost = s.PerHourCost,
-                    TotalHours = s.TotalHours,
-                    TotalCost = s.TotalCost,
+                    ItemTypeId = s.ItemTypeId,
+                    Unit = s.Unit,
+                    Rate = s.Rate,
+                    Quantity = s.Quantity,
+                    Total = s.Total,
+                    Product = s.Product.ProductName,
+                    Service = s.Service.ServiceName,
+                    IsProduct = s.IsProduct
                 }).ToList();
                 return List;
             }
@@ -118,28 +131,39 @@ namespace BVPortalApi.Controllers
         [HttpPost("InsertInvoice")]
         public async Task < HttpStatusCode > InsertInvoice(InvoiceDTO s) {
             var entity = new Invoice() {
-                    InvoiceNo = s.InvoiceNo,
-                    CreatedDate = s.CreatedDate,
-                    DueDate = s.DueDate,
-                    ClientId = s.ClientId,
-                    FromLine1 = s.FromLine1,
-                    FromLine2 = s.FromLine2,
-                    FromLine3 = s.FromLine3,
+                    Id = s.Id,
+                    InvoiceNumber = s.InvoiceNumber,
+                    InvoiceDate = s.InvoiceDate,
                     Term = s.Term,
-                    Status = s.Status
+                    DueDate = s.DueDate,
+                    CompanyId = s.CompanyId,
+                    CompanyName = s.CompanyName,
+                    CompanyAddressLine1 = s.CompanyAddressLine1,
+                    CompanyAddressLine2 = s.CompanyAddressLine2,
+                    CompanyAddressLine3 = s.CompanyAddressLine3,
+                    CompanyPhoneNumber = s.CompanyPhoneNumber,
+                    CompanyEmailAddress = s.CompanyEmailAddress,
+                    CustomerId = s.CustomerId,
+                    CustomerName = s.CustomerName,
+                    CustomerAddressLine1 = s.CustomerAddressLine1,
+                    CustomerAddressLine2 = s.CustomerAddressLine2,
+                    CustomerAddressLine3 = s.CustomerAddressLine3,
+                    Status = s.Status,
             };
             DBContext.Invoice.Add(entity);
             await DBContext.SaveChangesAsync();
             List<InvoiceProduct> p = s.Products.Select(
                 s => new InvoiceProduct
                 {
-                    //Id = s.Id,
-                    EmployeeId = s.EmployeeId,
-                    InvoiceId = entity.Id,
-                    ProjectId = s.ProjectId,
-                    PerHourCost = s.PerHourCost,
-                    TotalHours = s.TotalHours,
-                    TotalCost = s.TotalCost
+                    ProductId = s.ProductId,
+                    ServiceId = s.ServiceId,
+                    InvoiceId = s.InvoiceId,
+                    ItemTypeId = s.ItemTypeId,
+                    Unit = s.Unit,
+                    Rate = s.Rate,
+                    Quantity = s.Quantity,
+                    Total = s.Total,
+                    IsProduct = s.IsProduct
                 }
             ).ToList();
             DBContext.InvoiceProduct.AddRange(p);
@@ -147,31 +171,42 @@ namespace BVPortalApi.Controllers
             return HttpStatusCode.Created;
         }
         [HttpPut("UpdateInvoice")]
-        public async Task<HttpStatusCode> UpdateInvoice(InvoiceDTO Invoice) {
-            var entity = await DBContext.Invoice.FirstOrDefaultAsync(s => s.Id == Invoice.Id);
-            entity.InvoiceNo = Invoice.InvoiceNo;
-            entity.CreatedDate = Invoice.CreatedDate;
-            entity.DueDate = Invoice.DueDate;
-            entity.ClientId = Invoice.ClientId;
-            entity.FromLine1 = Invoice.FromLine1;
-            entity.FromLine2 = Invoice.FromLine2;
-            entity.FromLine3 = Invoice.FromLine3;
-            entity.Term = Invoice.Term;
+        public async Task<HttpStatusCode> UpdateInvoice(InvoiceDTO s) {
+            var entity = await DBContext.Invoice.FirstOrDefaultAsync(x => x.Id == s.Id);
+            entity.Id = s.Id;
+            entity.InvoiceNumber = s.InvoiceNumber;
+            entity.InvoiceDate = s.InvoiceDate;
+            entity.Term = s.Term;
+            entity.DueDate = s.DueDate;
+            entity.CompanyId = s.CompanyId;
+            entity.CompanyName = s.CompanyName;
+            entity.CompanyAddressLine1 = s.CompanyAddressLine1;
+            entity.CompanyAddressLine2 = s.CompanyAddressLine2;
+            entity.CompanyAddressLine3 = s.CompanyAddressLine3;
+            entity.CompanyPhoneNumber = s.CompanyPhoneNumber;
+            entity.CompanyEmailAddress = s.CompanyEmailAddress;
+            entity.CustomerId = s.CustomerId;
+            entity.CustomerName = s.CustomerName;
+            entity.CustomerAddressLine1 = s.CustomerAddressLine1;
+            entity.CustomerAddressLine2 = s.CustomerAddressLine2;
+            entity.CustomerAddressLine3 = s.CustomerAddressLine3;
+            entity.Status = s.Status;
 
-            entity.Status = Invoice.Status;
             await DBContext.SaveChangesAsync();
-            IQueryable<InvoiceProduct> ip = DBContext.InvoiceProduct.Where(x=>x.InvoiceId ==Invoice.Id);
+            IQueryable<InvoiceProduct> ip = DBContext.InvoiceProduct.Where(x=>x.InvoiceId ==s.Id);
             DBContext.InvoiceProduct.RemoveRange(ip);
-            List<InvoiceProduct> p = Invoice.Products.Select(
+            List<InvoiceProduct> p = s.Products.Select(
                 s => new InvoiceProduct
                 {
-                    //Id = s.Id,
-                    EmployeeId = s.EmployeeId,
-                    InvoiceId = entity.Id,
-                    ProjectId = s.ProjectId,
-                    PerHourCost = s.PerHourCost,
-                    TotalHours = s.TotalHours,
-                    TotalCost = s.TotalCost
+                    ProductId = s.ProductId,
+                    ServiceId = s.ServiceId,
+                    InvoiceId = s.InvoiceId,
+                    ItemTypeId = s.ItemTypeId,
+                    Unit = s.Unit,
+                    Rate = s.Rate,
+                    Quantity = s.Quantity,
+                    Total = s.Total,
+                    IsProduct = s.IsProduct
                 }
             ).ToList();
             DBContext.InvoiceProduct.AddRange(p);
