@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BVPortalApi.Migrations
 {
     [DbContext(typeof(BVContext))]
-    [Migration("20221107055216_AddedJobIdInCandidate")]
-    partial class AddedJobIdInCandidate
+    [Migration("20221224112235_UpdateProductTable")]
+    partial class UpdateProductTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -119,6 +119,18 @@ namespace BVPortalApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("Client")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClientContact")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClientMail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
@@ -134,10 +146,28 @@ namespace BVPortalApi.Migrations
                     b.Property<string>("PhoneNo")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Rate")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("ReferBy")
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Technology")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Vendor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VendorContact")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VendorMail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Visa")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -178,6 +208,144 @@ namespace BVPortalApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Client");
+                });
+
+            modelBuilder.Entity("BVPortalApi.Models.ClientTerm", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("ClientId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<int>("Term")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TermText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("ClientTerm");
+                });
+
+            modelBuilder.Entity("BVPortalApi.Models.ClientTermHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("ChangeBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ChangeDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ClientId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<int>("NewTerm")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NewTermText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OldTerm")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OldTermText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReasonForChange")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("ClientTermHistory");
+                });
+
+            modelBuilder.Entity("BVPortalApi.Models.EmpClientPerHour", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("ClientId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("EmployeeId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<float>("PerHour")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("EmpClientPerHour");
+                });
+
+            modelBuilder.Entity("BVPortalApi.Models.EmpClientPerHourHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("ChangeBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ChangeDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ClientId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("EmployeeId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<float>("NewPerHour")
+                        .HasColumnType("real");
+
+                    b.Property<float>("OldPerHour")
+                        .HasColumnType("real");
+
+                    b.Property<string>("ReasonForChange")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("EmpClientPerHourHistory");
                 });
 
             modelBuilder.Entity("BVPortalApi.Models.Employee", b =>
@@ -332,36 +500,72 @@ namespace BVPortalApi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int?>("ClientId")
-                        .IsRequired()
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DueDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FromLine1")
+                    b.Property<string>("CompanyAddressLine1")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FromLine2")
+                    b.Property<string>("CompanyAddressLine2")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FromLine3")
+                    b.Property<string>("CompanyAddressLine3")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("InvoiceNo")
+                    b.Property<string>("CompanyEmailAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CompanyId")
                         .HasColumnType("int");
+
+                    b.Property<string>("CompanyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyPhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerAddressLine1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerAddressLine2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerAddressLine3")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("GetPaidNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("InvoiceDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("InvoiceNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NoteToCustomer")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Term")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Term")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Invoice");
                 });
@@ -375,25 +579,37 @@ namespace BVPortalApi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int?>("EmployeeId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int?>("InvoiceId")
-                        .IsRequired()
                         .HasColumnType("int");
 
-                    b.Property<float>("PerHourCost")
-                        .HasColumnType("real");
+                    b.Property<bool>("IsProduct")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ItemTypeId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Product")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ProjectId")
-                        .IsRequired()
                         .HasColumnType("int");
 
-                    b.Property<float>("TotalCost")
+                    b.Property<float>("Quantity")
                         .HasColumnType("real");
 
-                    b.Property<int>("TotalHours")
-                        .HasColumnType("int");
+                    b.Property<float>("Rate")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Service")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Total")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -598,8 +814,23 @@ namespace BVPortalApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Duration")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Month")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ProjectId")
                         .HasColumnType("int");
@@ -609,6 +840,10 @@ namespace BVPortalApi.Migrations
 
                     b.Property<DateTime>("WeekEndingDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Year")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -739,6 +974,159 @@ namespace BVPortalApi.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("BVPortalAPIPrime.Models.Company", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("AddressLine1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AddressLine2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AddressLine3")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyLogo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmailAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Company");
+                });
+
+            modelBuilder.Entity("BVPortalAPIPrime.Models.Customer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("AddressLine1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AddressLine2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AddressLine3")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmailAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Term")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Customer");
+                });
+
+            modelBuilder.Entity("BVPortalAPIPrime.Models.PaymentOption", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("PaymentOptionName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PaymentOption");
+                });
+
+            modelBuilder.Entity("BVPortalAPIPrime.Models.Product", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Rate")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Product");
+                });
+
+            modelBuilder.Entity("BVPortalAPIPrime.Models.Service", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<float>("Rate")
+                        .HasColumnType("real");
+
+                    b.Property<string>("ServiceName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Service");
+                });
+
             modelBuilder.Entity("BVPortalApi.Models.Asset", b =>
                 {
                     b.HasOne("BVPortalApi.Models.AssetType", "AssetType")
@@ -786,6 +1174,66 @@ namespace BVPortalApi.Migrations
                     b.Navigation("Openjobs");
                 });
 
+            modelBuilder.Entity("BVPortalApi.Models.ClientTerm", b =>
+                {
+                    b.HasOne("BVPortalApi.Models.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("BVPortalApi.Models.ClientTermHistory", b =>
+                {
+                    b.HasOne("BVPortalApi.Models.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("BVPortalApi.Models.EmpClientPerHour", b =>
+                {
+                    b.HasOne("BVPortalApi.Models.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BVPortalApi.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("BVPortalApi.Models.EmpClientPerHourHistory", b =>
+                {
+                    b.HasOne("BVPortalApi.Models.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BVPortalApi.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Employee");
+                });
+
             modelBuilder.Entity("BVPortalApi.Models.EmployeeBasicInfo", b =>
                 {
                     b.HasOne("BVPortalApi.Models.Employee", "Employee")
@@ -806,40 +1254,38 @@ namespace BVPortalApi.Migrations
 
             modelBuilder.Entity("BVPortalApi.Models.Invoice", b =>
                 {
-                    b.HasOne("BVPortalApi.Models.Client", "Client")
+                    b.HasOne("BVPortalApi.Models.Client", null)
                         .WithMany("Invoice")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ClientId");
 
-                    b.Navigation("Client");
+                    b.HasOne("BVPortalAPIPrime.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("BVPortalAPIPrime.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("BVPortalApi.Models.InvoiceProduct", b =>
                 {
-                    b.HasOne("BVPortalApi.Models.Employee", "Employee")
+                    b.HasOne("BVPortalApi.Models.Employee", null)
                         .WithMany("InvoiceProduct")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmployeeId");
 
                     b.HasOne("BVPortalApi.Models.Invoice", "Invoice")
                         .WithMany("InvoiceProduct")
-                        .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("InvoiceId");
 
-                    b.HasOne("BVPortalApi.Models.Project", "Project")
+                    b.HasOne("BVPortalApi.Models.Project", null)
                         .WithMany("InvoiceProduct")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
+                        .HasForeignKey("ProjectId");
 
                     b.Navigation("Invoice");
-
-                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("BVPortalApi.Models.Leave", b =>

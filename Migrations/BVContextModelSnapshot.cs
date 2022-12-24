@@ -588,9 +588,8 @@ namespace BVPortalApi.Migrations
                     b.Property<string>("ItemTypeId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProductId")
-                        .IsRequired()
-                        .HasColumnType("int");
+                    b.Property<string>("Product")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ProjectId")
                         .HasColumnType("int");
@@ -601,9 +600,8 @@ namespace BVPortalApi.Migrations
                     b.Property<float>("Rate")
                         .HasColumnType("real");
 
-                    b.Property<int?>("ServiceId")
-                        .IsRequired()
-                        .HasColumnType("int");
+                    b.Property<string>("Service")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<float>("Total")
                         .HasColumnType("real");
@@ -617,11 +615,7 @@ namespace BVPortalApi.Migrations
 
                     b.HasIndex("InvoiceId");
 
-                    b.HasIndex("ProductId");
-
                     b.HasIndex("ProjectId");
-
-                    b.HasIndex("ServiceId");
 
                     b.ToTable("InvoiceProduct");
                 });
@@ -1285,27 +1279,11 @@ namespace BVPortalApi.Migrations
                         .WithMany("InvoiceProduct")
                         .HasForeignKey("InvoiceId");
 
-                    b.HasOne("BVPortalAPIPrime.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("BVPortalApi.Models.Project", null)
                         .WithMany("InvoiceProduct")
                         .HasForeignKey("ProjectId");
 
-                    b.HasOne("BVPortalAPIPrime.Models.Service", "Service")
-                        .WithMany()
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Invoice");
-
-                    b.Navigation("Product");
-
-                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("BVPortalApi.Models.Leave", b =>

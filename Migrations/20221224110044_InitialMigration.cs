@@ -43,6 +43,46 @@ namespace BVPortalApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Company",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AddressLine1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AddressLine2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AddressLine3 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EmailAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompanyLogo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Company", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Customer",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AddressLine1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AddressLine2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AddressLine3 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EmailAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Term = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Customer", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Employee",
                 columns: table => new
                 {
@@ -110,6 +150,36 @@ namespace BVPortalApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PaymentOption",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PaymentOptionName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentOption", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Product",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Rate = table.Column<float>(type: "real", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Product", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ReferList",
                 columns: table => new
                 {
@@ -124,6 +194,22 @@ namespace BVPortalApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ReferList", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Service",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ServiceName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Rate = table.Column<float>(type: "real", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Service", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -163,26 +249,46 @@ namespace BVPortalApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Invoice",
+                name: "ClientTerm",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    InvoiceNo = table.Column<int>(type: "int", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ClientId = table.Column<int>(type: "int", nullable: false),
-                    FromLine1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    FromLine2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    FromLine3 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Term = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    TermText = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Term = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Invoice", x => x.Id);
+                    table.PrimaryKey("PK_ClientTerm", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Invoice_Client_ClientId",
+                        name: "FK_ClientTerm_Client_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Client",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientTermHistory",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ClientId = table.Column<int>(type: "int", nullable: false),
+                    OldTermText = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OldTerm = table.Column<int>(type: "int", nullable: false),
+                    NewTermText = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NewTerm = table.Column<int>(type: "int", nullable: false),
+                    ReasonForChange = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ChangeDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ChangeBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientTermHistory", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClientTermHistory_Client_ClientId",
                         column: x => x.ClientId,
                         principalTable: "Client",
                         principalColumn: "Id",
@@ -214,26 +320,108 @@ namespace BVPortalApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Candidates",
+                name: "Invoice",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNo = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    InvoiceNumber = table.Column<int>(type: "int", nullable: false),
+                    InvoiceDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Term = table.Column<int>(type: "int", nullable: true),
+                    DueDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
+                    CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompanyAddressLine1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompanyAddressLine2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompanyAddressLine3 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompanyEmailAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompanyPhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CustomerId = table.Column<int>(type: "int", nullable: true),
+                    CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CustomerAddressLine1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CustomerAddressLine2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CustomerAddressLine3 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NoteToCustomer = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    GetPaidNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ReferBy = table.Column<int>(type: "int", nullable: true)
+                    ClientId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Candidates", x => x.Id);
+                    table.PrimaryKey("PK_Invoice", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Candidates_Employee_ReferBy",
-                        column: x => x.ReferBy,
-                        principalTable: "Employee",
+                        name: "FK_Invoice_Client_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Client",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Invoice_Company_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Company",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Invoice_Customer_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customer",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EmpClientPerHour",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false),
+                    ClientId = table.Column<int>(type: "int", nullable: false),
+                    PerHour = table.Column<float>(type: "real", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmpClientPerHour", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EmpClientPerHour_Client_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Client",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EmpClientPerHour_Employee_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employee",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EmpClientPerHourHistory",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false),
+                    ClientId = table.Column<int>(type: "int", nullable: false),
+                    OldPerHour = table.Column<float>(type: "real", nullable: false),
+                    NewPerHour = table.Column<float>(type: "real", nullable: false),
+                    ReasonForChange = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ChangeDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ChangeBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmpClientPerHourHistory", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EmpClientPerHourHistory_Client_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Client",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EmpClientPerHourHistory_Employee_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employee",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -341,6 +529,45 @@ namespace BVPortalApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Candidates",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReferBy = table.Column<int>(type: "int", nullable: true),
+                    JobId = table.Column<int>(type: "int", nullable: true),
+                    Technology = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Visa = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Rate = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Client = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClientContact = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClientMail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Vendor = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VendorContact = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VendorMail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Candidates", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Candidates_Employee_ReferBy",
+                        column: x => x.ReferBy,
+                        principalTable: "Employee",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Candidates_Openjobs_JobId",
+                        column: x => x.JobId,
+                        principalTable: "Openjobs",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AssetAllocation",
                 columns: table => new
                 {
@@ -372,42 +599,6 @@ namespace BVPortalApi.Migrations
                         column: x => x.AllocatedToId,
                         principalTable: "Employee",
                         principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "InvoiceProduct",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    InvoiceId = table.Column<int>(type: "int", nullable: false),
-                    EmployeeId = table.Column<int>(type: "int", nullable: false),
-                    ProjectId = table.Column<int>(type: "int", nullable: false),
-                    PerHourCost = table.Column<float>(type: "real", nullable: false),
-                    TotalHours = table.Column<int>(type: "int", nullable: false),
-                    TotalCost = table.Column<float>(type: "real", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_InvoiceProduct", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_InvoiceProduct_Employee_EmployeeId",
-                        column: x => x.EmployeeId,
-                        principalTable: "Employee",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_InvoiceProduct_Invoice_InvoiceId",
-                        column: x => x.InvoiceId,
-                        principalTable: "Invoice",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_InvoiceProduct_Project_ProjectId",
-                        column: x => x.ProjectId,
-                        principalTable: "Project",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -446,6 +637,11 @@ namespace BVPortalApi.Migrations
                     EmployeeId = table.Column<int>(type: "int", nullable: true),
                     ProjectId = table.Column<int>(type: "int", nullable: true),
                     WeekEndingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Month = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Year = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Duration = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -461,6 +657,56 @@ namespace BVPortalApi.Migrations
                         column: x => x.ProjectId,
                         principalTable: "Project",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InvoiceProduct",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InvoiceId = table.Column<int>(type: "int", nullable: true),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    ServiceId = table.Column<int>(type: "int", nullable: false),
+                    ItemTypeId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Quantity = table.Column<float>(type: "real", nullable: false),
+                    Rate = table.Column<float>(type: "real", nullable: false),
+                    Total = table.Column<float>(type: "real", nullable: false),
+                    IsProduct = table.Column<bool>(type: "bit", nullable: false),
+                    EmployeeId = table.Column<int>(type: "int", nullable: true),
+                    ProjectId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InvoiceProduct", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_InvoiceProduct_Employee_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employee",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_InvoiceProduct_Invoice_InvoiceId",
+                        column: x => x.InvoiceId,
+                        principalTable: "Invoice",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_InvoiceProduct_Product_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Product",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_InvoiceProduct_Project_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Project",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_InvoiceProduct_Service_ServiceId",
+                        column: x => x.ServiceId,
+                        principalTable: "Service",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -542,9 +788,44 @@ namespace BVPortalApi.Migrations
                 column: "TypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Candidates_JobId",
+                table: "Candidates",
+                column: "JobId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Candidates_ReferBy",
                 table: "Candidates",
                 column: "ReferBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientTerm_ClientId",
+                table: "ClientTerm",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientTermHistory_ClientId",
+                table: "ClientTermHistory",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmpClientPerHour_ClientId",
+                table: "EmpClientPerHour",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmpClientPerHour_EmployeeId",
+                table: "EmpClientPerHour",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmpClientPerHourHistory_ClientId",
+                table: "EmpClientPerHourHistory",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmpClientPerHourHistory_EmployeeId",
+                table: "EmpClientPerHourHistory",
+                column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeBasicInfo_EmployeeId",
@@ -562,6 +843,16 @@ namespace BVPortalApi.Migrations
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Invoice_CompanyId",
+                table: "Invoice",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invoice_CustomerId",
+                table: "Invoice",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_InvoiceProduct_EmployeeId",
                 table: "InvoiceProduct",
                 column: "EmployeeId");
@@ -572,9 +863,19 @@ namespace BVPortalApi.Migrations
                 column: "InvoiceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_InvoiceProduct_ProductId",
+                table: "InvoiceProduct",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_InvoiceProduct_ProjectId",
                 table: "InvoiceProduct",
                 column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InvoiceProduct_ServiceId",
+                table: "InvoiceProduct",
+                column: "ServiceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Leave_EmployeeId",
@@ -653,6 +954,18 @@ namespace BVPortalApi.Migrations
                 name: "Candidates");
 
             migrationBuilder.DropTable(
+                name: "ClientTerm");
+
+            migrationBuilder.DropTable(
+                name: "ClientTermHistory");
+
+            migrationBuilder.DropTable(
+                name: "EmpClientPerHour");
+
+            migrationBuilder.DropTable(
+                name: "EmpClientPerHourHistory");
+
+            migrationBuilder.DropTable(
                 name: "EmployeeBasicInfo");
 
             migrationBuilder.DropTable(
@@ -668,7 +981,7 @@ namespace BVPortalApi.Migrations
                 name: "Leave");
 
             migrationBuilder.DropTable(
-                name: "Openjobs");
+                name: "PaymentOption");
 
             migrationBuilder.DropTable(
                 name: "ProjectAssignment");
@@ -692,7 +1005,16 @@ namespace BVPortalApi.Migrations
                 name: "Assets");
 
             migrationBuilder.DropTable(
+                name: "Openjobs");
+
+            migrationBuilder.DropTable(
                 name: "Invoice");
+
+            migrationBuilder.DropTable(
+                name: "Product");
+
+            migrationBuilder.DropTable(
+                name: "Service");
 
             migrationBuilder.DropTable(
                 name: "LeaveType");
@@ -702,6 +1024,12 @@ namespace BVPortalApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "AssetType");
+
+            migrationBuilder.DropTable(
+                name: "Company");
+
+            migrationBuilder.DropTable(
+                name: "Customer");
 
             migrationBuilder.DropTable(
                 name: "Employee");

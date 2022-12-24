@@ -29,16 +29,14 @@ namespace BVPortalApi.Controllers
                 s => new InvoiceProductDTO
                 {
                     Id = s.Id,
-                    ProductId = s.ProductId,
-                    ServiceId = s.ServiceId,
+                    Product = s.Product,
+                    Service = s.Service,
                     InvoiceId = s.InvoiceId,
                     ItemTypeId = s.ItemTypeId,
                     Unit = s.Unit,
                     Rate = s.Rate,
                     Quantity = s.Quantity,
                     Total = s.Total,
-                    Product = s.Product.ProductName,
-                    Service = s.Service.ServiceName,
                     IsProduct = s.IsProduct
                 }
             ).ToListAsync();
@@ -56,15 +54,15 @@ namespace BVPortalApi.Controllers
         [HttpPost("InsertInvoiceProduct")]
         public async Task < HttpStatusCode > InsertInvoiceProduct(InvoiceProductDTO s) {
             var entity = new InvoiceProduct() {
-                    ProductId = s.ProductId,
-                    ServiceId = s.ServiceId,
-                    InvoiceId = s.InvoiceId,
-                    ItemTypeId = s.ItemTypeId,
-                    Unit = s.Unit,
-                    Rate = s.Rate,
-                    Quantity = s.Quantity,
-                    Total = s.Total,
-                    IsProduct = s.IsProduct
+                Product = s.IsProduct?s.Name:"",
+                Service = s.IsProduct?"":s.Name,
+                InvoiceId = s.InvoiceId,
+                ItemTypeId = s.ItemTypeId,
+                Unit = s.Unit,
+                Rate = s.Rate,
+                Quantity = s.Quantity,
+                Total = s.Total,
+                IsProduct = s.IsProduct
             };
             DBContext.InvoiceProduct.Add(entity);
             await DBContext.SaveChangesAsync();
@@ -74,8 +72,8 @@ namespace BVPortalApi.Controllers
         [HttpPut("InvoiceProduct")]
         public async Task<HttpStatusCode> UpdateInvoiceProduct(InvoiceProductDTO s) {
             var entity = await DBContext.InvoiceProduct.FirstOrDefaultAsync(x => x.Id == s.Id);
-            entity.ProductId = s.ProductId;
-            entity.ServiceId = s.ServiceId;
+            entity.Product = s.Product;
+            entity.Service = s.Service;
             entity.InvoiceId = s.InvoiceId;
             entity.ItemTypeId = s.ItemTypeId;
             entity.Unit = s.Unit;

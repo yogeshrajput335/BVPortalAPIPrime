@@ -46,20 +46,21 @@ namespace BVPortalApi.Controllers
                     CustomerAddressLine2 = s.CustomerAddressLine2,
                     CustomerAddressLine3 = s.CustomerAddressLine3,
                     Status = s.Status,
+                    Total = s.InvoiceProduct.Select(x=>x.Total).Sum(),
                     Products =  (DBContext.InvoiceProduct.Where(x=>x.InvoiceId == s.Id).Select(
                     s => new InvoiceProductDTO
                     {
                         Id = s.Id,
-                        ProductId = s.ProductId,
-                        ServiceId = s.ServiceId,
+                        // ProductId = s.ProductId,
+                        // ServiceId = s.ServiceId,
                         InvoiceId = s.InvoiceId,
                         ItemTypeId = s.ItemTypeId,
                         Unit = s.Unit,
                         Rate = s.Rate,
                         Quantity = s.Quantity,
                         Total = s.Total,
-                        Product = s.Product.ProductName,
-                        Service = s.Service.ServiceName,
+                        Product = s.Product,
+                        Service = s.Service,
                         IsProduct = s.IsProduct
                     }).ToList() )               
                 }
@@ -112,16 +113,14 @@ namespace BVPortalApi.Controllers
                 s => new InvoiceProductDTO
                 {
                     Id = s.Id,
-                    ProductId = s.ProductId,
-                    ServiceId = s.ServiceId,
                     InvoiceId = s.InvoiceId,
                     ItemTypeId = s.ItemTypeId,
                     Unit = s.Unit,
                     Rate = s.Rate,
                     Quantity = s.Quantity,
                     Total = s.Total,
-                    Product = s.Product.ProductName,
-                    Service = s.Service.ServiceName,
+                    Product = s.Product,
+                    Service = s.Service,
                     IsProduct = s.IsProduct
                 }).ToList();
                 return List;
@@ -148,16 +147,16 @@ namespace BVPortalApi.Controllers
                     CustomerAddressLine1 = s.CustomerAddressLine1,
                     CustomerAddressLine2 = s.CustomerAddressLine2,
                     CustomerAddressLine3 = s.CustomerAddressLine3,
-                    Status = s.Status,
+                    Status = "NEW",
             };
             DBContext.Invoice.Add(entity);
             await DBContext.SaveChangesAsync();
             List<InvoiceProduct> p = s.Products.Select(
                 s => new InvoiceProduct
                 {
-                    ProductId = s.ProductId,
-                    ServiceId = s.ServiceId,
-                    InvoiceId = s.InvoiceId,
+                    Product = s.IsProduct?s.Name:"",
+                    Service = s.IsProduct?"":s.Name,
+                    InvoiceId = entity.Id,
                     ItemTypeId = s.ItemTypeId,
                     Unit = s.Unit,
                     Rate = s.Rate,
@@ -198,9 +197,9 @@ namespace BVPortalApi.Controllers
             List<InvoiceProduct> p = s.Products.Select(
                 s => new InvoiceProduct
                 {
-                    ProductId = s.ProductId,
-                    ServiceId = s.ServiceId,
-                    InvoiceId = s.InvoiceId,
+                    Product = s.IsProduct?s.Name:"",
+                    Service = s.IsProduct?"":s.Name,
+                    InvoiceId = entity.Id,
                     ItemTypeId = s.ItemTypeId,
                     Unit = s.Unit,
                     Rate = s.Rate,

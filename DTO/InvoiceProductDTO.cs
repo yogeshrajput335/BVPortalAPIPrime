@@ -21,5 +21,6 @@ namespace BVPortalApi.Models
         public string? Product { get; set; }
         public string? Service { get; set; }
         public bool IsProduct { get; set; }
+        public string? Name { get; set; }
     }    
 }
