@@ -55,13 +55,13 @@ namespace BVPortalApi.Controllers
         [HttpPost("InsertCompany")]
         public async Task < HttpStatusCode > InsertCompany(CompanyDTO s) {
             var entity = new Company() {
-                    CompanyName = s.CompanyName,
-                    AddressLine1 = s.AddressLine1,
-                    AddressLine2 = s.AddressLine2,
-                    AddressLine3 = s.AddressLine3,
-                    EmailAddress = s.EmailAddress,
-                    PhoneNumber = s.PhoneNumber,
-                    CompanyLogo = s.CompanyLogo,
+                CompanyName = s.CompanyName,
+                AddressLine1 = s.AddressLine1,
+                AddressLine2 = s.AddressLine2,
+                AddressLine3 = s.AddressLine3,
+                EmailAddress = s.EmailAddress,
+                PhoneNumber = s.PhoneNumber,
+                CompanyLogo = s.CompanyLogo,
                 Status = s.Status
             };
             DBContext.Company.Add(entity);
