@@ -14,10 +14,6 @@ namespace BVPortalApi.Models
         public int Id { get; set; }
         [ForeignKey("Invoice")]
         public int? InvoiceId { get; set; }
-        // [ForeignKey("Product")]
-        // public int? ProductId { get; set; }
-        // [ForeignKey("Service")]
-        // public int? ServiceId { get; set; }
         public string? Product { get; set; }
         public string? Service { get; set; }
         public string? ItemTypeId { get; set; }
@@ -27,7 +23,5 @@ namespace BVPortalApi.Models
         public float Total { get; set; }
         public bool IsProduct { get; set; }
         public virtual Invoice Invoice { get; set; }
-        // public virtual Product Product { get; set; }
-        // public virtual Service Service { get; set; }
     }
 }
