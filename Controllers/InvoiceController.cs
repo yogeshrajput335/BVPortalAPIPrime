@@ -46,6 +46,8 @@ namespace BVPortalApi.Controllers
                     CustomerAddressLine2 = s.CustomerAddressLine2,
                     CustomerAddressLine3 = s.CustomerAddressLine3,
                     Status = s.Status,
+                    NoteToCustomer = s.NoteToCustomer,
+                    GetPaidNotes = s.GetPaidNotes,
                     Total = s.InvoiceProduct.Select(x=>x.Total).Sum(),
                     Products =  (DBContext.InvoiceProduct.Where(x=>x.InvoiceId == s.Id).Select(
                     s => new InvoiceProductDTO
@@ -98,6 +100,8 @@ namespace BVPortalApi.Controllers
                     CustomerAddressLine2 = s.CustomerAddressLine2,
                     CustomerAddressLine3 = s.CustomerAddressLine3,
                     Status = s.Status,
+                    NoteToCustomer = s.NoteToCustomer,
+                    GetPaidNotes = s.GetPaidNotes
                 }
             ).FirstOrDefaultAsync();
             
@@ -146,6 +150,8 @@ namespace BVPortalApi.Controllers
                     CustomerAddressLine2 = s.CustomerAddressLine2,
                     CustomerAddressLine3 = s.CustomerAddressLine3,
                     Status = "NEW",
+                    NoteToCustomer = s.NoteToCustomer,
+                    GetPaidNotes = s.GetPaidNotes
             };
             DBContext.Invoice.Add(entity);
             await DBContext.SaveChangesAsync();
@@ -188,6 +194,8 @@ namespace BVPortalApi.Controllers
             entity.CustomerAddressLine2 = s.CustomerAddressLine2;
             entity.CustomerAddressLine3 = s.CustomerAddressLine3;
             entity.Status = s.Status;
+            entity.NoteToCustomer = s.NoteToCustomer;
+            entity.GetPaidNotes = s.GetPaidNotes;
 
             await DBContext.SaveChangesAsync();
             IQueryable<InvoiceProduct> ip = DBContext.InvoiceProduct.Where(x=>x.InvoiceId ==s.Id);
