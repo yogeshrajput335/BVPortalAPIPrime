@@ -15,6 +15,6 @@ namespace BVPortalApi.DTO
         public string? EmailAddress { get; set; }
         public string? PhoneNumber { get; set; }
         public int Term { get; set; }
-        public string Status { get; set; }
+        public string? Status { get; set; }
     }
 }

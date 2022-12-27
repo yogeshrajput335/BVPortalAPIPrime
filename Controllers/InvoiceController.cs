@@ -51,8 +51,6 @@ namespace BVPortalApi.Controllers
                     s => new InvoiceProductDTO
                     {
                         Id = s.Id,
-                        // ProductId = s.ProductId,
-                        // ServiceId = s.ServiceId,
                         InvoiceId = s.InvoiceId,
                         ItemTypeId = s.ItemTypeId,
                         Unit = s.Unit,
@@ -215,6 +213,13 @@ namespace BVPortalApi.Controllers
         
         [HttpDelete("DeleteInvoice/{Id}")]
         public async Task < HttpStatusCode > DeleteInvoice(int Id) {
+             List<InvoiceProduct> products = DBContext.InvoiceProduct.Where(x=>x.InvoiceId == Id)
+             .Select(i => new InvoiceProduct(){
+                Id = i.Id
+            }).ToList();
+            DBContext.InvoiceProduct.AttachRange(products);
+            DBContext.InvoiceProduct.RemoveRange(products);
+
             var entity = new Invoice() {
                 Id = Id
             };

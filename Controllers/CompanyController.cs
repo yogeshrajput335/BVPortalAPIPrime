@@ -78,8 +78,12 @@ namespace BVPortalApi.Controllers
             entity.AddressLine3 = Company.AddressLine3;
             entity.EmailAddress = Company.EmailAddress;
             entity.PhoneNumber = Company.PhoneNumber;
-            entity.CompanyLogo = Company.CompanyLogo;
-            entity.Status = Company.Status;
+            if(Company.CompanyLogo != null){
+                entity.CompanyLogo = Company.CompanyLogo;
+            }
+            if(Company.Status != null){
+                entity.Status = Company.Status;
+            }
             await DBContext.SaveChangesAsync();
             return HttpStatusCode.OK;
         }

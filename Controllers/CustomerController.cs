@@ -79,10 +79,17 @@ namespace BVPortalApi.Controllers
             entity.AddressLine1 = Customer.AddressLine1;
             entity.AddressLine2 = Customer.AddressLine2;
             entity.AddressLine3 = Customer.AddressLine3;
-            entity.EmailAddress = Customer.EmailAddress;
-            entity.PhoneNumber = Customer.PhoneNumber;
+            if(Customer.EmailAddress != null){
+                entity.EmailAddress = Customer.EmailAddress;
+            }
+            if(Customer.PhoneNumber != null){
+                entity.PhoneNumber = Customer.PhoneNumber;
+            }
+            if(Customer.Status != null){
+                entity.Status = Customer.Status;
+            }
             entity.Term = Customer.Term;
-            entity.Status = Customer.Status;
+            
             await DBContext.SaveChangesAsync();
             return HttpStatusCode.OK;
         }
