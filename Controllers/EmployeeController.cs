@@ -34,7 +34,8 @@ namespace BVPortalApi.Controllers
                     Email = s.Email,
                     PhoneNumber = s.PhoneNumber,
                     EmployeeType = s.EmployeeType,
-                    Status = s.Status
+                    Status = s.Status,
+                    FullName = s.LastName+", "+s.FirstName,
                 }
             ).ToListAsync();
             
