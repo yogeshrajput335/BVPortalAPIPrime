@@ -29,6 +29,7 @@ namespace BVPortalApi.Models
         public string? NoteToCustomer { get; set; }
         public string? GetPaidNotes { get; set; }
         public string? Status { get; set; }
+        public float? Total { get; set; }
         public List<InvoiceProductDTO> Products { get; set; }
         
     }
