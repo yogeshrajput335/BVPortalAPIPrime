@@ -22,6 +22,12 @@ namespace BVPortalApi.Controllers
             this.DBContext = DBContext;
         }
 
+        [HttpGet("GetNextInvoiceNumber")]
+        public ActionResult<int> GetNextInvoiceNumber()
+        {
+            return DBContext.Invoice.Max(x=>x.InvoiceNumber);
+        }
+
         [HttpGet("GetInvoice")]
         public async Task<ActionResult<List<InvoiceDTO>>> Get()
         {
@@ -64,7 +70,7 @@ namespace BVPortalApi.Controllers
                         IsProduct = s.IsProduct
                     }).ToList() )               
                 }
-            ).ToListAsync();
+            ).OrderByDescending(x=>x.InvoiceNumber).ToListAsync();
             
             if (List.Count < 0)
             {
