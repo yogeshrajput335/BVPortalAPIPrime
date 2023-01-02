@@ -39,3 +39,7 @@ Password : 123456789
 * https://www.dropbox.com/s/3wo9qd2fdpe5yow/timesheet_model.png
 * https://stackoverflow.com/questions/10526625/database-schema-that-manages-weekly-timesheets
 
+# Add package
+
+*  dotnet add package Microsoft.EntityFrameworkCore.Design
+
