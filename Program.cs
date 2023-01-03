@@ -7,6 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 using BVPortalAPIPrime.Settings;
 using System.Configuration;
 using BVPortalAPIPrime.Services;
+using FluentValidation.AspNetCore;
+using BVPortalAPIPrime.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,7 +43,8 @@ builder.Services.AddAuthentication(opt => {
 builder.Services.AddScoped<BVContext, BVContext>();
 builder.Services.AddTransient<IMailService, MailService>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AssetValidator>());
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
