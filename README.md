@@ -41,5 +41,8 @@ Password : 123456789
 
 # Add package
 
-*  dotnet add package Microsoft.EntityFrameworkCore.Design
+*  dotnet add package Microsoft.Extensions.Caching.Memory
+
+# Caching 
+* https://code-maze.com/aspnetcore-in-memory-caching/
 

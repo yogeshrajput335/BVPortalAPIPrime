@@ -8,6 +8,7 @@ using BVPortalApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace BVPortalApi.Controllers
 {
@@ -15,28 +16,49 @@ namespace BVPortalApi.Controllers
     [Route("api/[controller]"), Authorize(Roles = "ADMIN")]
     public class AssetController : ControllerBase
     {
-        
+        private const string assetListCacheKey = "assetList";
         private readonly BVContext DBContext;
+        private IMemoryCache _cache;
+        private ILogger<AssetController> _logger;
 
-        public AssetController(BVContext DBContext)
+        public AssetController(BVContext DBContext, IMemoryCache cache, ILogger<AssetController> logger)
         {
             this.DBContext = DBContext;
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpGet("GetAsset")]
         public async Task<ActionResult<List<AssetDTO>>> Get()
         {
-            var List = await DBContext.Assets.Select(
-                s => new AssetDTO
-                {
-                    Id = s.Id,
-                    Name = s.Name,
-                    TypeId = s.TypeId,
-                    Type = s.AssetType.Name,
-                    ModelNumber = s.ModelNumber,
-                    Status = s.Status
-                }
-            ).ToListAsync();
+            _logger.Log(LogLevel.Information, "Trying to fetch the list of assets from cache.");
+            if (_cache.TryGetValue(assetListCacheKey, out List<AssetDTO> List))
+            {
+                _logger.Log(LogLevel.Information, "Asset list found in cache.");
+                
+            }
+            else
+            {
+                _logger.Log(LogLevel.Information, "Asset list not found in cache. Fetching from database.");
+                List = await DBContext.Assets.Select(
+                    s => new AssetDTO
+                    {
+                        Id = s.Id,
+                        Name = s.Name,
+                        TypeId = s.TypeId,
+                        Type = s.AssetType.Name,
+                        ModelNumber = s.ModelNumber,
+                        Status = s.Status
+                    }
+                ).ToListAsync();
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                        .SetSlidingExpiration(TimeSpan.FromSeconds(60))
+                        .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
+                        .SetPriority(CacheItemPriority.Normal)
+                        .SetSize(1024);
+                _cache.Set(assetListCacheKey, List, cacheEntryOptions);
+            }
+            
             
             if (List.Count < 0)
             {
@@ -58,6 +80,7 @@ namespace BVPortalApi.Controllers
             };
             DBContext.Assets.Add(entity);
             await DBContext.SaveChangesAsync();
+            _cache.Remove(assetListCacheKey);
             return HttpStatusCode.Created;
         }
 
@@ -69,6 +92,7 @@ namespace BVPortalApi.Controllers
             entity.ModelNumber = Asset.ModelNumber;
             entity.Status = Asset.Status;
             await DBContext.SaveChangesAsync();
+            _cache.Remove(assetListCacheKey);
             return HttpStatusCode.OK;
         }
         
@@ -80,6 +104,7 @@ namespace BVPortalApi.Controllers
             DBContext.Assets.Attach(entity);
             DBContext.Assets.Remove(entity);
             await DBContext.SaveChangesAsync();
+            _cache.Remove(assetListCacheKey);
             return HttpStatusCode.OK;
         }
         [HttpPost("DeleteAssets")]
@@ -90,6 +115,7 @@ namespace BVPortalApi.Controllers
             DBContext.Assets.AttachRange(entities);
             DBContext.Assets.RemoveRange(entities);
             await DBContext.SaveChangesAsync();
+            _cache.Remove(assetListCacheKey);
             return HttpStatusCode.OK;
         }
     }
