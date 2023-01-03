@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using BVPortalApi.DTO;
 using BVPortalApi.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -20,12 +21,14 @@ namespace BVPortalApi.Controllers
         private readonly BVContext DBContext;
         private IMemoryCache _cache;
         private ILogger<AssetController> _logger;
+        private readonly IMapper _mapper;  
 
-        public AssetController(BVContext DBContext, IMemoryCache cache, ILogger<AssetController> logger)
+        public AssetController(BVContext DBContext, IMemoryCache cache, ILogger<AssetController> logger, IMapper mapper)
         {
             this.DBContext = DBContext;
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _mapper = mapper; 
         }
 
         [HttpGet("GetAsset")]
@@ -40,17 +43,8 @@ namespace BVPortalApi.Controllers
             else
             {
                 _logger.Log(LogLevel.Information, "Asset list not found in cache. Fetching from database.");
-                List = await DBContext.Assets.Select(
-                    s => new AssetDTO
-                    {
-                        Id = s.Id,
-                        Name = s.Name,
-                        TypeId = s.TypeId,
-                        Type = s.AssetType.Name,
-                        ModelNumber = s.ModelNumber,
-                        Status = s.Status
-                    }
-                ).ToListAsync();
+                List = _mapper.Map<List<AssetDTO>>(await DBContext.Assets.Include(x=>x.AssetType).ToListAsync());
+                
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                         .SetSlidingExpiration(TimeSpan.FromSeconds(60))
                         .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
