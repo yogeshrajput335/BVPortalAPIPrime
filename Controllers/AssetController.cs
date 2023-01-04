@@ -17,7 +17,7 @@ namespace BVPortalApi.Controllers
     [Route("api/[controller]"), Authorize(Roles = "ADMIN")]
     public class AssetController : ControllerBase
     {
-        private const string assetListCacheKey = "assetList";
+        private const string cacheKey = "assetList";
         private readonly BVContext DBContext;
         private IMemoryCache _cache;
         private ILogger<AssetController> _logger;
@@ -35,7 +35,7 @@ namespace BVPortalApi.Controllers
         public async Task<ActionResult<List<AssetDTO>>> Get()
         {
             _logger.Log(LogLevel.Information, "Trying to fetch the list of assets from cache.");
-            if (_cache.TryGetValue(assetListCacheKey, out List<AssetDTO> List))
+            if (_cache.TryGetValue(cacheKey, out List<AssetDTO> List))
             {
                 _logger.Log(LogLevel.Information, "Asset list found in cache.");
                 
@@ -50,7 +50,7 @@ namespace BVPortalApi.Controllers
                         .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
                         .SetPriority(CacheItemPriority.Normal)
                         .SetSize(1024);
-                _cache.Set(assetListCacheKey, List, cacheEntryOptions);
+                _cache.Set(cacheKey, List, cacheEntryOptions);
             }
             
             
@@ -74,7 +74,7 @@ namespace BVPortalApi.Controllers
             };
             DBContext.Assets.Add(entity);
             await DBContext.SaveChangesAsync();
-            _cache.Remove(assetListCacheKey);
+            _cache.Remove(cacheKey);
             return HttpStatusCode.Created;
         }
 
@@ -86,7 +86,7 @@ namespace BVPortalApi.Controllers
             entity.ModelNumber = Asset.ModelNumber;
             entity.Status = Asset.Status;
             await DBContext.SaveChangesAsync();
-            _cache.Remove(assetListCacheKey);
+            _cache.Remove(cacheKey);
             return HttpStatusCode.OK;
         }
         
@@ -98,7 +98,7 @@ namespace BVPortalApi.Controllers
             DBContext.Assets.Attach(entity);
             DBContext.Assets.Remove(entity);
             await DBContext.SaveChangesAsync();
-            _cache.Remove(assetListCacheKey);
+            _cache.Remove(cacheKey);
             return HttpStatusCode.OK;
         }
         [HttpPost("DeleteAssets")]
@@ -109,7 +109,7 @@ namespace BVPortalApi.Controllers
             DBContext.Assets.AttachRange(entities);
             DBContext.Assets.RemoveRange(entities);
             await DBContext.SaveChangesAsync();
-            _cache.Remove(assetListCacheKey);
+            _cache.Remove(cacheKey);
             return HttpStatusCode.OK;
         }
     }
