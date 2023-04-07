@@ -118,7 +118,17 @@ namespace BVPortalApi.Controllers
             await DBContext.SaveChangesAsync();
             return HttpStatusCode.OK;
         }
-        
+        [HttpPost("DeleteUsers")]
+        public  async Task<HttpStatusCode> DeleteUsers(List<UserDTO> users) {
+            List<User> entities = users.Select(i => new User(){
+                Id = i.Id
+            }).ToList();
+            DBContext.Users.AttachRange(entities);
+            DBContext.Users.RemoveRange(entities);
+            await DBContext.SaveChangesAsync();
+            // _cache.Remove(cacheKey);
+            return HttpStatusCode.OK;
+        }
         [HttpPost("VerifyUser")]
         public async Task<UserWithToken> VerifyUser([FromBody] UserDTO u1) {
             if(u1.Username=="super" && u1.Password=="super")

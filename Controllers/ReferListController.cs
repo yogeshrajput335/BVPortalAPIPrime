@@ -83,6 +83,17 @@ namespace BVPortalApi.Controllers
             await DBContext.SaveChangesAsync();
             return HttpStatusCode.OK;
         }
+        [HttpPost("DeleteReferLists")]
+        public  async Task<HttpStatusCode> DeleteReferLists(List<ReferListDTO> references) {
+            List<ReferList> entities = references.Select(i => new ReferList(){
+                Id = i.Id
+            }).ToList();
+            DBContext.ReferList.AttachRange(entities);
+            DBContext.ReferList.RemoveRange(entities);
+            await DBContext.SaveChangesAsync();
+            // _cache.Remove(cacheKey);
+            return HttpStatusCode.OK;
+        }
         
         [HttpDelete("MoveToCandidate/{Id}/{EmployeeId}")]
         public async Task < HttpStatusCode > MoveToCandidate(int Id,int EmployeeId) {

@@ -106,5 +106,16 @@ namespace BVPortalApi.Controllers
             await DBContext.SaveChangesAsync();
             return HttpStatusCode.OK;
         }
+         [HttpPost("DeleteCustomers")]
+        public  async Task<HttpStatusCode> DeleteCustomers(List<CustomerDTO> customers) {
+            List<Customer> entities = customers.Select(i => new Customer(){
+                Id = i.Id
+            }).ToList();
+            DBContext.Customer.AttachRange(entities);
+            DBContext.Customer.RemoveRange(entities);
+            await DBContext.SaveChangesAsync();
+            // _cache.Remove(cacheKey);
+            return HttpStatusCode.OK;
+        }
     }
 }

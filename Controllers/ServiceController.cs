@@ -82,5 +82,16 @@ namespace BVPortalApi.Controllers
             await DBContext.SaveChangesAsync();
             return HttpStatusCode.OK;
         }
+         [HttpPost("DeleteServices")]
+        public  async Task<HttpStatusCode> DeleteServices(List<ServiceDTO> services) {
+            List<Service> entities = services.Select(i => new Service(){
+                Id = i.Id
+            }).ToList();
+            DBContext.Service.AttachRange(entities);
+            DBContext.Service.RemoveRange(entities);
+            await DBContext.SaveChangesAsync();
+            // _cache.Remove(cacheKey);
+            return HttpStatusCode.OK;
+        }
     }
 }

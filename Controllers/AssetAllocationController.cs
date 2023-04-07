@@ -89,5 +89,16 @@ namespace BVPortalApi.Controllers
             await DBContext.SaveChangesAsync();
             return HttpStatusCode.OK;
         }
+         [HttpPost("DeleteAssetAllocations")]
+        public  async Task<HttpStatusCode> DeleteAssetAllocation(List<AssetAllocationDTO> assetAllocations) {
+            List<AssetAllocation> entities = assetAllocations.Select(i => new AssetAllocation(){
+                Id = i.Id
+            }).ToList();
+            DBContext.AssetAllocation.AttachRange(entities);
+            DBContext.AssetAllocation.RemoveRange(entities);
+            await DBContext.SaveChangesAsync();
+            // _cache.Remove(cacheKey);
+            return HttpStatusCode.OK;
+        }
     }
 }

@@ -51,11 +51,11 @@ namespace BVPortalApi.Controllers
         {
             var entity = new HolidayMaster()
             {
-                    Id = s.Id,
-                    HolidayName = s.HolidayName,
-                    Description = s.Description,
-                    Date = s.Date,
-                    Status = s.Status
+                Id = s.Id,
+                HolidayName = s.HolidayName,
+                Description = s.Description,
+                Date = s.Date,
+                Status = s.Status
             };
             DBContext.HolidayMaster.Add(entity);
             await DBContext.SaveChangesAsync();
@@ -73,7 +73,7 @@ namespace BVPortalApi.Controllers
             await DBContext.SaveChangesAsync();
             return HttpStatusCode.OK;
         }
-        
+
         [HttpDelete("DeleteHolidayMaster/{Id}"), Authorize(Roles = "ADMIN")]
         public async Task<HttpStatusCode> DeleteHolidayMaster(int Id)
         {
@@ -84,6 +84,19 @@ namespace BVPortalApi.Controllers
             DBContext.HolidayMaster.Attach(entity);
             DBContext.HolidayMaster.Remove(entity);
             await DBContext.SaveChangesAsync();
+            return HttpStatusCode.OK;
+        }
+        [HttpPost("DeleteHolidayMasters")]
+        public async Task<HttpStatusCode> DeleteHolidayMasters(List<HolidayMasterDTO> holidays)
+        {
+            List<HolidayMaster> entities = holidays.Select(i => new HolidayMaster()
+            {
+                Id = i.Id
+            }).ToList();
+            DBContext.HolidayMaster.AttachRange(entities);
+            DBContext.HolidayMaster.RemoveRange(entities);
+            await DBContext.SaveChangesAsync();
+            // _cache.Remove(cacheKey);
             return HttpStatusCode.OK;
         }
     }
