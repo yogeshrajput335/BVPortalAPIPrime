@@ -81,5 +81,16 @@ namespace BVPortalApi.Controllers
             await DBContext.SaveChangesAsync();
             return HttpStatusCode.OK;
         }
+         [HttpPost("DeletePaymentOptions")]
+        public  async Task<HttpStatusCode> DeletePaymentOptions(List<PaymentOptionDTO> paymentOptions) {
+            List<PaymentOption> entities = paymentOptions.Select(i => new PaymentOption(){
+                Id = i.Id
+            }).ToList();
+            DBContext.PaymentOption.AttachRange(entities);
+            DBContext.PaymentOption.RemoveRange(entities);
+            await DBContext.SaveChangesAsync();
+            // _cache.Remove(cacheKey);
+            return HttpStatusCode.OK;
+        }
     }
 }

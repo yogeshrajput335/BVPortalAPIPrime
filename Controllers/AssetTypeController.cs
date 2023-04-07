@@ -103,5 +103,16 @@ namespace BVPortalApi.Controllers
             _cache.Remove(assetTypeListCacheKey);
             return HttpStatusCode.OK;
         }
+        [HttpPost("DeleteAssetTypes")]
+        public  async Task<HttpStatusCode> DeleteAssetTypes(List<AssetTypeDTO> assettypes) {
+            List<AssetType> entities = assettypes.Select(i => new AssetType(){
+                Id = i.Id
+            }).ToList();
+            DBContext.AssetType.AttachRange(entities);
+            DBContext.AssetType.RemoveRange(entities);
+            await DBContext.SaveChangesAsync();
+            // _cache.Remove(cacheKey);
+            return HttpStatusCode.OK;
+        }
     }
 }

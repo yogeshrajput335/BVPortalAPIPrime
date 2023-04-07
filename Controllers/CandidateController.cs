@@ -121,5 +121,16 @@ namespace BVPortalApi.Controllers
             await DBContext.SaveChangesAsync();
             return HttpStatusCode.OK;
         }
+        [HttpPost("DeleteCandidates")]
+        public  async Task<HttpStatusCode> DeleteCandidates(List<CandidateDTO> candidates) {
+            List<Candidate> entities = candidates.Select(i => new Candidate(){
+                Id = i.Id
+            }).ToList();
+            DBContext.Candidates.AttachRange(entities);
+            DBContext.Candidates.RemoveRange(entities);
+            await DBContext.SaveChangesAsync();
+            // _cache.Remove(cacheKey);
+            return HttpStatusCode.OK;
+        }
     }
 }
