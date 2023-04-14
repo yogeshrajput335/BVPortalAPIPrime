@@ -7,11 +7,13 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using BVPortalApi.DTO;
+using AutoMapper;
 using BVPortalApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace BVPortalApi.Controllers
 {
@@ -19,29 +21,54 @@ namespace BVPortalApi.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
+       private const string cacheKey = "userList";
         private readonly BVContext DBContext;
+        private IMemoryCache _cache;
+        private ILogger<UserController> _logger;
+        private readonly IMapper _mapper;
 
-        public UserController(BVContext DBContext)
+        public UserController(BVContext DBContext, IMemoryCache cache, ILogger<UserController> logger, IMapper mapper)
         {
             this.DBContext = DBContext;
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _mapper = mapper;
         }
 
         [HttpGet("GetUsers"), Authorize(Roles = "ADMIN")]
         public async Task<ActionResult<List<UserDTO>>> Get()
         {
-            var List = await DBContext.Users.Select(
-                s => new UserDTO
-                {
-                    Id = s.Id,
-                    Username = s.Username,
-                    Password = s.Password,
-                    UserType = s.UserType,
-                    Email = s.Email,
-                    Status = s.Status,
-                    EmployeeId = s.EmployeeId,
-                    Employee = s.Employee.LastName+ ", "+s.Employee.FirstName
-                }
-            ).ToListAsync();
+            // var List = await DBContext.Users.Select(
+            //     s => new UserDTO
+            //     {
+            //         Id = s.Id,
+            //         Username = s.Username,
+            //         Password = s.Password,
+            //         UserType = s.UserType,
+            //         Email = s.Email,
+            //         Status = s.Status,
+            //         EmployeeId = s.EmployeeId,
+            //         Employee = s.Employee.LastName+ ", "+s.Employee.FirstName
+            //     }
+            // ).ToListAsync();
+            _logger.Log(LogLevel.Information, "Trying to fetch the list of Userc from cache.");
+            if (_cache.TryGetValue(cacheKey, out List<UserDTO> List))
+            {
+                _logger.Log(LogLevel.Information, "User list found in cache.");
+                
+            }
+            else
+            {
+                _logger.Log(LogLevel.Information, "User list not found in cache. Fetching from database.");
+                List = _mapper.Map<List<UserDTO>>(await DBContext.Users.Include(x=>x.Employee).ToListAsync());
+                
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                        .SetSlidingExpiration(TimeSpan.FromSeconds(60))
+                        .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
+                        .SetPriority(CacheItemPriority.Normal)
+                        .SetSize(1024);
+                _cache.Set(cacheKey, List, cacheEntryOptions);
+            }
             
             if (List.Count < 0)
             {
@@ -82,16 +109,18 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertUser"), Authorize(Roles = "ADMIN")]
         public async Task < HttpStatusCode > InsertUser(UserDTO User) {
-            var entity = new User() {
-                Username = User.Username,
-                Password = User.Password,
-                UserType = User.UserType,
-                Email = User.Email,
-                Status = User.Status,
-                EmployeeId = User.EmployeeId
-            };
+            // var entity = new User() {
+            //     Username = User.Username,
+            //     Password = User.Password,
+            //     UserType = User.UserType,
+            //     Email = User.Email,
+            //     Status = User.Status,
+            //     EmployeeId = User.EmployeeId
+            // };
+            var entity = _mapper.Map<User>(User);
             DBContext.Users.Add(entity);
             await DBContext.SaveChangesAsync();
+            _cache.Remove(cacheKey);
             return HttpStatusCode.Created;
         }
 
@@ -105,6 +134,7 @@ namespace BVPortalApi.Controllers
             entity.Status = User.Status;
             entity.EmployeeId = User.EmployeeId;
             await DBContext.SaveChangesAsync();
+            _cache.Remove(cacheKey);
             return HttpStatusCode.OK;
         }
 
@@ -116,6 +146,7 @@ namespace BVPortalApi.Controllers
             DBContext.Users.Attach(entity);
             DBContext.Users.Remove(entity);
             await DBContext.SaveChangesAsync();
+            _cache.Remove(cacheKey);
             return HttpStatusCode.OK;
         }
         [HttpPost("DeleteUsers")]
@@ -126,7 +157,7 @@ namespace BVPortalApi.Controllers
             DBContext.Users.AttachRange(entities);
             DBContext.Users.RemoveRange(entities);
             await DBContext.SaveChangesAsync();
-            // _cache.Remove(cacheKey);
+            _cache.Remove(cacheKey);
             return HttpStatusCode.OK;
         }
         [HttpPost("VerifyUser")]
