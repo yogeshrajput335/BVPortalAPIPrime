@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using BVPortalApi.DTO;
 using BVPortalApi.Models;
 using BVPortalAPIPrime.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace BVPortalApi.Controllers
 {
@@ -16,32 +18,55 @@ namespace BVPortalApi.Controllers
     [Route("api/[controller]"), Authorize(Roles = "ADMIN")]
     public class CompanyController : ControllerBase
     {
-        
+        private const string cacheKey = "companyList";
         private readonly BVContext DBContext;
+        private IMemoryCache _cache;
+        private ILogger<CompanyController> _logger;
+        private readonly IMapper _mapper; 
 
-        public CompanyController(BVContext DBContext)
+        public CompanyController(BVContext DBContext, IMemoryCache cache, ILogger<CompanyController> logger, IMapper mapper)
         {
             this.DBContext = DBContext;
+             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _mapper = mapper; 
         }
 
         [HttpGet("GetCompany")]
         public async Task<ActionResult<List<CompanyDTO>>> Get()
         {
-            var List = await DBContext.Company.Select(
-                s => new CompanyDTO
-                {
-                    Id = s.Id,
-                    CompanyName = s.CompanyName,
-                    AddressLine1 = s.AddressLine1,
-                    AddressLine2 = s.AddressLine2,
-                    AddressLine3 = s.AddressLine3,
-                    EmailAddress = s.EmailAddress,
-                    PhoneNumber = s.PhoneNumber,
-                    CompanyLogo = s.CompanyLogo,
-                    Status = s.Status
-                }
-            ).ToListAsync();
-            
+            // var List = await DBContext.Company.Select(
+            //     s => new CompanyDTO
+            //     {
+            //         Id = s.Id,
+            //         CompanyName = s.CompanyName,
+            //         AddressLine1 = s.AddressLine1,
+            //         AddressLine2 = s.AddressLine2,
+            //         AddressLine3 = s.AddressLine3,
+            //         EmailAddress = s.EmailAddress,
+            //         PhoneNumber = s.PhoneNumber,
+            //         CompanyLogo = s.CompanyLogo,
+            //         Status = s.Status
+            //     }
+            // ).ToListAsync();
+             _logger.Log(LogLevel.Information, "Trying to fetch the list of companies from cache.");
+            if (_cache.TryGetValue(cacheKey, out List<CompanyDTO> List))
+            {
+                _logger.Log(LogLevel.Information, "Company list found in cache.");
+                
+            }
+            else
+            {
+                _logger.Log(LogLevel.Information, "Company list not found in cache. Fetching from database.");
+                List = _mapper.Map<List<CompanyDTO>>(await DBContext.Company.ToListAsync());
+                
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                        .SetSlidingExpiration(TimeSpan.FromSeconds(60))
+                        .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
+                        .SetPriority(CacheItemPriority.Normal)
+                        .SetSize(1024);
+                _cache.Set(cacheKey, List, cacheEntryOptions);
+            }
             if (List.Count < 0)
             {
                 return NotFound();
@@ -54,18 +79,20 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertCompany")]
         public async Task < HttpStatusCode > InsertCompany(CompanyDTO s) {
-            var entity = new Company() {
-                CompanyName = s.CompanyName,
-                AddressLine1 = s.AddressLine1,
-                AddressLine2 = s.AddressLine2,
-                AddressLine3 = s.AddressLine3,
-                EmailAddress = s.EmailAddress,
-                PhoneNumber = s.PhoneNumber,
-                CompanyLogo = s.CompanyLogo,
-                Status = s.Status
-            };
+            // var entity = new Company() {
+            //     CompanyName = s.CompanyName,
+            //     AddressLine1 = s.AddressLine1,
+            //     AddressLine2 = s.AddressLine2,
+            //     AddressLine3 = s.AddressLine3,
+            //     EmailAddress = s.EmailAddress,
+            //     PhoneNumber = s.PhoneNumber,
+            //     CompanyLogo = s.CompanyLogo,
+            //     Status = s.Status
+            // };
+            var entity = _mapper.Map<Company>(s);
             DBContext.Company.Add(entity);
             await DBContext.SaveChangesAsync();
+            _cache.Remove(cacheKey);
             return HttpStatusCode.Created;
         }
 
@@ -85,6 +112,7 @@ namespace BVPortalApi.Controllers
                 entity.Status = Company.Status;
             }
             await DBContext.SaveChangesAsync();
+            _cache.Remove(cacheKey);
             return HttpStatusCode.OK;
         }
         
@@ -96,6 +124,7 @@ namespace BVPortalApi.Controllers
             DBContext.Company.Attach(entity);
             DBContext.Company.Remove(entity);
             await DBContext.SaveChangesAsync();
+            _cache.Remove(cacheKey);
             return HttpStatusCode.OK;
         }
         [HttpPost("DeleteCompanies")]
@@ -106,7 +135,7 @@ namespace BVPortalApi.Controllers
             DBContext.Company.AttachRange(entities);
             DBContext.Company.RemoveRange(entities);
             await DBContext.SaveChangesAsync();
-            // _cache.Remove(cacheKey);
+             _cache.Remove(cacheKey);
             return HttpStatusCode.OK;
         }
     }

@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using BVPortalApi.DTO;
 using BVPortalApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace BVPortalApi.Controllers
 {
@@ -15,30 +17,54 @@ namespace BVPortalApi.Controllers
     [Route("api/[controller]"), Authorize(Roles = "ADMIN")]
     public class ProjectController : ControllerBase
     {
+        private const string cacheKey = "projectList";
         private readonly BVContext DBContext;
+        private IMemoryCache _cache;
+        private ILogger<ProjectController> _logger;
+        private readonly IMapper _mapper;
 
-        public ProjectController(BVContext DBContext)
-        {
-            this.DBContext = DBContext;
+        public ProjectController(BVContext DBContext, IMemoryCache cache, ILogger<ProjectController> logger, IMapper mapper)
+        {  this.DBContext = DBContext;
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _mapper = mapper;
         }
 
         [HttpGet("GetProjects")]
         public async Task<ActionResult<List<ProjectDTO>>> Get()
         {
-            var List = await DBContext.Project.Select(
-                s => new ProjectDTO
-                {
-                    Id = s.Id,
-                    ProjectName = s.ProjectName,
-                    ClientId = s.ClientId,
-                    ClientName = s.Client.ClientName,
-                    Description = s.Description,
-                    StartDate =s.StartDate,
-                    EndDate = s.EndDate,
-                    ProjectType = s.ProjectType,
-                    Status = s.Status
-                }
-            ).ToListAsync();
+            // var List = await DBContext.Project.Select(
+            //     s => new ProjectDTO
+            //     {
+            //         Id = s.Id,
+            //         ProjectName = s.ProjectName,
+            //         ClientId = s.ClientId,
+            //         ClientName = s.Client.ClientName,
+            //         Description = s.Description,
+            //         StartDate =s.StartDate,
+            //         EndDate = s.EndDate,
+            //         ProjectType = s.ProjectType,
+            //         Status = s.Status
+            //     }
+            // ).ToListAsync();
+             _logger.Log(LogLevel.Information, "Trying to fetch the list of Projects from cache.");
+            if (_cache.TryGetValue(cacheKey, out List<ProjectDTO> List))
+            {
+                _logger.Log(LogLevel.Information, "Project list found in cache.");
+                
+            }
+            else
+            {
+                _logger.Log(LogLevel.Information, "Project list not found in cache. Fetching from database.");
+                List = _mapper.Map<List<ProjectDTO>>(await DBContext.Project.Include(x=>x.Client).ToListAsync());
+                
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                        .SetSlidingExpiration(TimeSpan.FromSeconds(60))
+                        .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
+                        .SetPriority(CacheItemPriority.Normal)
+                        .SetSize(1024);
+                _cache.Set(cacheKey, List, cacheEntryOptions);
+            }
             
             if (List.Count < 0)
             {
@@ -52,18 +78,20 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertProject")]
         public async Task < HttpStatusCode > InsertProject(ProjectDTO s) {
-            var entity = new Project() {
-                     Id = s.Id,
-                    ProjectName = s.ProjectName,
-                    ClientId = s.ClientId,
-                    Description = s.Description,
-                    StartDate =s.StartDate,
-                    EndDate = s.EndDate,
-                    ProjectType = s.ProjectType,
-                    Status = s.Status
-            };
+            // var entity = new Project() {
+            //          Id = s.Id,
+            //         ProjectName = s.ProjectName,
+            //         ClientId = s.ClientId,
+            //         Description = s.Description,
+            //         StartDate =s.StartDate,
+            //         EndDate = s.EndDate,
+            //         ProjectType = s.ProjectType,
+            //         Status = s.Status
+            // };
+            var entity = _mapper.Map<Project>(s);
             DBContext.Project.Add(entity);
             await DBContext.SaveChangesAsync();
+            _cache.Remove(cacheKey);
             return HttpStatusCode.Created;
         }
 
@@ -78,6 +106,7 @@ namespace BVPortalApi.Controllers
             entity.ProjectType = Project.ProjectType;
             entity.Status = Project.Status;
             await DBContext.SaveChangesAsync();
+            _cache.Remove(cacheKey);
             return HttpStatusCode.OK;
         }
         
@@ -89,6 +118,7 @@ namespace BVPortalApi.Controllers
             DBContext.Project.Attach(entity);
             DBContext.Project.Remove(entity);
             await DBContext.SaveChangesAsync();
+            _cache.Remove(cacheKey);
             return HttpStatusCode.OK;
         }
     }

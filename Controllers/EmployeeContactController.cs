@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using BVPortalApi.DTO;
 using BVPortalApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace BVPortalApi.Controllers
 {
@@ -14,28 +16,53 @@ namespace BVPortalApi.Controllers
     [Route("api/[controller]")]
     public class EmployeeContactController : ControllerBase
     {
+        private const string cacheKey = "employeeContactList";
         private readonly BVContext DBContext;
+        private IMemoryCache _cache;
+        private ILogger<EmployeeContactController> _logger;
+        private readonly IMapper _mapper;  
 
-        public EmployeeContactController(BVContext DBContext)
+        public EmployeeContactController(BVContext DBContext, IMemoryCache cache, ILogger<EmployeeContactController> logger, IMapper mapper)
         {
             this.DBContext = DBContext;
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _mapper = mapper; 
         }
 
         [HttpGet("GetEmployeeContact")]
         public async Task<ActionResult<List<EmployeeContactDTO>>> GetEmployeeContact()
         {
-            var List = await DBContext.EmployeeContact.Select(
-                s => new EmployeeContactDTO
-                {
-                    Id = s.Id,
-                    EmployeeName = s.Employee.FirstName + " "+ s.Employee.LastName,
-                    PersonalEmailId = s.PersonalEmailId,
-                    PhoneNumber = s.PhoneNumber,
-                    WorkEmail = s.WorkEmail,
-                    EmergencyContactName = s.EmergencyContactName,
-                    EmergencyContactNumber = s.EmergencyContactNumber
-                }
-            ).ToListAsync();
+            // var List = await DBContext.EmployeeContact.Select(
+            //     s => new EmployeeContactDTO
+            //     {
+            //         Id = s.Id,
+            //         EmployeeName = s.Employee.FirstName + " "+ s.Employee.LastName,
+            //         PersonalEmailId = s.PersonalEmailId,
+            //         PhoneNumber = s.PhoneNumber,
+            //         WorkEmail = s.WorkEmail,
+            //         EmergencyContactName = s.EmergencyContactName,
+            //         EmergencyContactNumber = s.EmergencyContactNumber
+            //     }
+            // ).ToListAsync();
+            _logger.Log(LogLevel.Information, "Trying to fetch the list of Employee Contacts from cache.");
+            if (_cache.TryGetValue(cacheKey, out List<EmployeeContactDTO> List))
+            {
+                _logger.Log(LogLevel.Information, "Employee Contact list found in cache.");
+                
+            }
+            else
+            {
+                _logger.Log(LogLevel.Information, "Employee Contact list not found in cache. Fetching from database.");
+                List = _mapper.Map<List<EmployeeContactDTO>>(await DBContext.EmployeeContact.ToListAsync());
+                
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                        .SetSlidingExpiration(TimeSpan.FromSeconds(60))
+                        .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
+                        .SetPriority(CacheItemPriority.Normal)
+                        .SetSize(1024);
+                _cache.Set(cacheKey, List, cacheEntryOptions);
+            }
             
             if (List.Count < 0)
             {
@@ -76,16 +103,18 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertEmployeeContact")]
         public async Task < HttpStatusCode > InsertEmployeeContact(EmployeeContactDTO s) {
-            var entity = new EmployeeContact() {
-                    EmployeeId = s.EmployeeId,
-                    PersonalEmailId = s.PersonalEmailId,
-                    PhoneNumber = s.PhoneNumber,
-                    WorkEmail = s.WorkEmail,
-                    EmergencyContactName = s.EmergencyContactName,
-                    EmergencyContactNumber = s.EmergencyContactNumber
-            };
+            // var entity = new EmployeeContact() {
+            //         EmployeeId = s.EmployeeId,
+            //         PersonalEmailId = s.PersonalEmailId,
+            //         PhoneNumber = s.PhoneNumber,
+            //         WorkEmail = s.WorkEmail,
+            //         EmergencyContactName = s.EmergencyContactName,
+            //         EmergencyContactNumber = s.EmergencyContactNumber
+            // };
+            var entity = _mapper.Map<EmployeeContact>(s);
             DBContext.EmployeeContact.Add(entity);
             await DBContext.SaveChangesAsync();
+            _cache.Remove(cacheKey);
             return HttpStatusCode.Created;
         }
 
@@ -98,6 +127,7 @@ namespace BVPortalApi.Controllers
             entity.EmergencyContactName = Employee.EmergencyContactName;
             entity.EmergencyContactNumber = Employee.EmergencyContactNumber;
             await DBContext.SaveChangesAsync();
+            _cache.Remove(cacheKey);
             return HttpStatusCode.OK;
         }
         
@@ -109,6 +139,7 @@ namespace BVPortalApi.Controllers
             DBContext.EmployeeContact.Attach(entity);
             DBContext.EmployeeContact.Remove(entity);
             await DBContext.SaveChangesAsync();
+            _cache.Remove(cacheKey);
             return HttpStatusCode.OK;
         }
     }

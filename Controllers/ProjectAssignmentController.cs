@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using BVPortalApi.DTO;
 using BVPortalApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace BVPortalApi.Controllers
 {
@@ -15,30 +17,55 @@ namespace BVPortalApi.Controllers
     [Route("api/[controller]"), Authorize(Roles = "ADMIN")]
     public class ProjectAssignmentController : ControllerBase
     {
+        private const string cacheKey = "assetList";
         private readonly BVContext DBContext;
+        private IMemoryCache _cache;
+        private ILogger<ProjectAssignmentController> _logger;
+        private readonly IMapper _mapper;
 
-        public ProjectAssignmentController(BVContext DBContext)
+        public ProjectAssignmentController(BVContext DBContext, IMemoryCache cache, ILogger<ProjectAssignmentController> logger, IMapper mapper)
         {
             this.DBContext = DBContext;
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _mapper = mapper;
         }
 
         [HttpGet("GetProjectAssignment")]
         public async Task<ActionResult<List<ProjectAssignmentDTO>>> Get()
         {
-            var List = await DBContext.ProjectAssignment.Select(
-                s => new ProjectAssignmentDTO
-                {
-                    Id = s.Id,
-                    ProjectId = s.ProjectId,
-                    EmployeeId  = s.EmployeeId,
-                    ProjectName = s.Project.ProjectName,
-                    EmployeeName  = s.Employee.FirstName + " " + s.Employee.LastName,
-                    Notes = s.Notes,
-                    StartDate = s.StartDate,
-                    EndDate = s.EndDate
-                   }
-            ).ToListAsync();
-            
+            // var List = await DBContext.ProjectAssignment.Select(
+            //     s => new ProjectAssignmentDTO
+            //     {
+            //         Id = s.Id,
+            //         ProjectId = s.ProjectId,
+            //         EmployeeId  = s.EmployeeId,
+            //         ProjectName = s.Project.ProjectName,
+            //         EmployeeName  = s.Employee.FirstName + " " + s.Employee.LastName,
+            //         Notes = s.Notes,
+            //         StartDate = s.StartDate,
+            //         EndDate = s.EndDate
+            //        }
+            // ).ToListAsync();
+             _logger.Log(LogLevel.Information, "Trying to fetch the list of Project Assignments from cache.");
+            if (_cache.TryGetValue(cacheKey, out List<ProjectAssignmentDTO> List))
+            {
+                _logger.Log(LogLevel.Information, "Project Assignment list found in cache.");
+                
+            }
+            else
+            {
+                _logger.Log(LogLevel.Information, "Project Assignment list not found in cache. Fetching from database.");
+                List = _mapper.Map<List<ProjectAssignmentDTO>>(await DBContext.ProjectAssignment.Include(x=>x.Project).ToListAsync());
+                List = _mapper.Map<List<ProjectAssignmentDTO>>(await DBContext.ProjectAssignment.Include(x=>x.Employee).ToListAsync());
+                
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                        .SetSlidingExpiration(TimeSpan.FromSeconds(60))
+                        .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
+                        .SetPriority(CacheItemPriority.Normal)
+                        .SetSize(1024);
+                _cache.Set(cacheKey, List, cacheEntryOptions);
+            }
             if (List.Count < 0)
             {
                 return NotFound();
@@ -51,15 +78,17 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertProjectAssignment")]
         public async Task < HttpStatusCode > InsertProjectAssignment(ProjectAssignmentDTO s) {
-            var entity = new ProjectAssignment() {
-                    ProjectId = s.ProjectId,
-                    EmployeeId  = s.EmployeeId,
-                    Notes = s.Notes,
-                    StartDate = s.StartDate,
-                    EndDate = s.EndDate
-            };
+            // var entity = new ProjectAssignment() {
+            //         ProjectId = s.ProjectId,
+            //         EmployeeId  = s.EmployeeId,
+            //         Notes = s.Notes,
+            //         StartDate = s.StartDate,
+            //         EndDate = s.EndDate
+            // };
+            var entity = _mapper.Map<ProjectAssignment>(s);
             DBContext.ProjectAssignment.Add(entity);
             await DBContext.SaveChangesAsync();
+            _cache.Remove(cacheKey);
             return HttpStatusCode.Created;
         }
 
@@ -72,6 +101,7 @@ namespace BVPortalApi.Controllers
             entity.StartDate = ProjectAssignment.StartDate;
             entity.EndDate = ProjectAssignment.EndDate;
             await DBContext.SaveChangesAsync();
+            _cache.Remove(cacheKey);
             return HttpStatusCode.OK;
         }
 
@@ -83,6 +113,7 @@ namespace BVPortalApi.Controllers
             DBContext.ProjectAssignment.Attach(entity);
             DBContext.ProjectAssignment.Remove(entity);
             await DBContext.SaveChangesAsync();
+            _cache.Remove(cacheKey);
             return HttpStatusCode.OK;
         }
         
