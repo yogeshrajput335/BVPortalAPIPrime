@@ -7,6 +7,7 @@
 ```
 https://jasonwatmore.com/post/2021/10/26/net-5-connect-to-mysql-database-with-entity-framework-core
 https://www.c-sharpcorner.com/article/rest-api-with-asp-net-6-and-mysql/
+https://code-maze.com/authentication-aspnetcore-jwt-1/
 ```
 
 # MIGRATION 
@@ -45,4 +46,9 @@ Password : 123456789
 
 # Caching 
 * https://code-maze.com/aspnetcore-in-memory-caching/
+
+## ERROR detected dubious ownership in repository` without adding `safe.directory`
+* git config --global --add safe.directory 'F:/Work/Blueverse/MySql Portal/BVPortalAPIPrime'
+* git config --global safe.directory *
+
 

@@ -235,5 +235,12 @@ namespace BVPortalApi.Controllers
                 return List;
             }
         }
+
+        [HttpGet("GetEmployeeCount")]
+        public ActionResult<int> GetEmployeeCount()
+        {
+            return  DBContext.Employee.Where(x=>x.Status.ToLower() == "active").Count();
+        }
+
     }
 }
