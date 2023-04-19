@@ -111,8 +111,6 @@ namespace BVPortalApi.Controllers
                     TimesheetDetail = details
             };
             DBContext.Timesheet.Add(entity);
-            
-            //DBContext.TimesheetDetail.AddRange(details);
             await DBContext.SaveChangesAsync();
             return HttpStatusCode.Created;
         }

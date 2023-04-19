@@ -13,7 +13,6 @@ namespace BVPortalAPIPrime.Controllers
     [Route("api/[controller]")]
     public class MailController : ControllerBase
     {
-        
         private readonly IMailService mailService;
         public MailController(IMailService mailService)
         {

@@ -38,19 +38,6 @@ namespace BVPortalApi.Controllers
         [HttpGet("GetUsers"), Authorize(Roles = "ADMIN")]
         public async Task<ActionResult<List<UserDTO>>> Get()
         {
-            // var List = await DBContext.Users.Select(
-            //     s => new UserDTO
-            //     {
-            //         Id = s.Id,
-            //         Username = s.Username,
-            //         Password = s.Password,
-            //         UserType = s.UserType,
-            //         Email = s.Email,
-            //         Status = s.Status,
-            //         EmployeeId = s.EmployeeId,
-            //         Employee = s.Employee.LastName+ ", "+s.Employee.FirstName
-            //     }
-            // ).ToListAsync();
             _logger.Log(LogLevel.Information, "Trying to fetch the list of Userc from cache.");
             if (_cache.TryGetValue(cacheKey, out List<UserDTO> List))
             {
@@ -109,14 +96,6 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertUser"), Authorize(Roles = "ADMIN")]
         public async Task < HttpStatusCode > InsertUser(UserDTO User) {
-            // var entity = new User() {
-            //     Username = User.Username,
-            //     Password = User.Password,
-            //     UserType = User.UserType,
-            //     Email = User.Email,
-            //     Status = User.Status,
-            //     EmployeeId = User.EmployeeId
-            // };
             var entity = _mapper.Map<User>(User);
             DBContext.Users.Add(entity);
             await DBContext.SaveChangesAsync();
@@ -195,10 +174,12 @@ namespace BVPortalApi.Controllers
                 );
                 var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
                 return new UserWithToken { user = u,token = tokenString };
-
-                //return new UserWithToken { user = u,token="test"};
             }
         }
-
+         [HttpGet("GetUserCount")]
+        public ActionResult<int> GetUserCount()
+        {
+            return  DBContext.Users.Where(x=>x.Status.ToLower() == "active").Count();
+        }
     }
 }

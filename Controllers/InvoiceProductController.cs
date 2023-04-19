@@ -65,17 +65,6 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertInvoiceProduct")]
         public async Task < HttpStatusCode > InsertInvoiceProduct(InvoiceProductDTO s) {
-            // var entity = new InvoiceProduct() {
-            //     Product = s.IsProduct?s.Name:"",
-            //     Service = s.IsProduct?"":s.Name,
-            //     InvoiceId = s.InvoiceId,
-            //     ItemTypeId = s.ItemTypeId,
-            //     Unit = s.Unit,
-            //     Rate = s.Rate,
-            //     Quantity = s.Quantity,
-            //     Total = s.Total,
-            //     IsProduct = s.IsProduct
-            // };
             var entity = _mapper.Map<InvoiceProduct>(s);
             DBContext.InvoiceProduct.Add(entity);
             await DBContext.SaveChangesAsync();

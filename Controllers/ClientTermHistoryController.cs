@@ -33,20 +33,6 @@ namespace BVPortalApi.Controllers
         [HttpGet("GetClientClientTermHistory")]
         public async Task<ActionResult<List<ClientTermHistoryDTO>>> Get()
         {
-            // var List = await DBContext.ClientTermHistory.Select(
-            //     s => new ClientTermHistoryDTO
-            //     {
-            //         Id = s.Id,
-            //         ClientId = s.ClientId,
-            //         OldTermText = s.OldTermText,
-            //         OldTerm = s.OldTerm,
-            //         NewTermText = s.NewTermText,
-            //         NewTerm =s.NewTerm,
-            //         ReasonForChange = s.ReasonForChange,
-            //         ChangeDate = s.ChangeDate,
-            //         ChangeBy = s.ChangeBy
-            //     }
-            // ).ToListAsync();
              _logger.Log(LogLevel.Information, "Trying to fetch the list of Client Term History from cache.");
             if (_cache.TryGetValue(cacheKey, out List<ClientTermHistoryDTO> List))
             {
@@ -78,16 +64,6 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertClientTermHistory")]
         public async Task < HttpStatusCode > InsertClientTermHistory(ClientTermHistoryDTO s) {
-            // var entity = new ClientTermHistory() {
-            //         ClientId = s.ClientId,
-            //         OldTermText = s.OldTermText,
-            //         OldTerm = s.OldTerm,
-            //         NewTermText = s.NewTermText,
-            //         NewTerm =s.NewTerm,
-            //         ReasonForChange = s.ReasonForChange,
-            //         ChangeDate = s.ChangeDate,
-            //         ChangeBy = s.ChangeBy
-            // };
             var entity = _mapper.Map<ClientTermHistory>(s);
             DBContext.ClientTermHistory.Add(entity);
             await DBContext.SaveChangesAsync();

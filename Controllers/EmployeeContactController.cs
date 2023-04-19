@@ -33,18 +33,6 @@ namespace BVPortalApi.Controllers
         [HttpGet("GetEmployeeContact")]
         public async Task<ActionResult<List<EmployeeContactDTO>>> GetEmployeeContact()
         {
-            // var List = await DBContext.EmployeeContact.Select(
-            //     s => new EmployeeContactDTO
-            //     {
-            //         Id = s.Id,
-            //         EmployeeName = s.Employee.FirstName + " "+ s.Employee.LastName,
-            //         PersonalEmailId = s.PersonalEmailId,
-            //         PhoneNumber = s.PhoneNumber,
-            //         WorkEmail = s.WorkEmail,
-            //         EmergencyContactName = s.EmergencyContactName,
-            //         EmergencyContactNumber = s.EmergencyContactNumber
-            //     }
-            // ).ToListAsync();
             _logger.Log(LogLevel.Information, "Trying to fetch the list of Employee Contacts from cache.");
             if (_cache.TryGetValue(cacheKey, out List<EmployeeContactDTO> List))
             {
@@ -103,14 +91,6 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertEmployeeContact")]
         public async Task < HttpStatusCode > InsertEmployeeContact(EmployeeContactDTO s) {
-            // var entity = new EmployeeContact() {
-            //         EmployeeId = s.EmployeeId,
-            //         PersonalEmailId = s.PersonalEmailId,
-            //         PhoneNumber = s.PhoneNumber,
-            //         WorkEmail = s.WorkEmail,
-            //         EmergencyContactName = s.EmergencyContactName,
-            //         EmergencyContactNumber = s.EmergencyContactNumber
-            // };
             var entity = _mapper.Map<EmployeeContact>(s);
             DBContext.EmployeeContact.Add(entity);
             await DBContext.SaveChangesAsync();

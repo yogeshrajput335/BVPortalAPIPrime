@@ -40,46 +40,6 @@ namespace BVPortalApi.Controllers
         [HttpGet("GetInvoice")]
         public async Task<ActionResult<List<InvoiceDTO>>> Get()
         {
-            // var List = await DBContext.Invoice.Select(
-            //     s => new InvoiceDTO
-            //     {
-            //         Id = s.Id,
-            //         InvoiceNumber = s.InvoiceNumber,
-            //         InvoiceDate = s.InvoiceDate,
-            //         Term = s.Term,
-            //         DueDate = s.DueDate,
-            //         CompanyId = s.CompanyId,
-            //         CompanyName = s.CompanyName,
-            //         CompanyAddressLine1 = s.CompanyAddressLine1,
-            //         CompanyAddressLine2 = s.CompanyAddressLine2,
-            //         CompanyAddressLine3 = s.CompanyAddressLine3,
-            //         CompanyPhoneNumber = s.CompanyPhoneNumber,
-            //         CompanyEmailAddress = s.CompanyEmailAddress,
-            //         CustomerId = s.CustomerId,
-            //         CustomerName = s.CustomerName,
-            //         CustomerAddressLine1 = s.CustomerAddressLine1,
-            //         CustomerAddressLine2 = s.CustomerAddressLine2,
-            //         CustomerAddressLine3 = s.CustomerAddressLine3,
-            //         Status = s.Status,
-            //         NoteToCustomer = s.NoteToCustomer,
-            //         GetPaidNotes = s.GetPaidNotes,
-            //         Total = s.InvoiceProduct.Select(x=>x.Total).Sum(),
-            //         Products =  (DBContext.InvoiceProduct.Where(x=>x.InvoiceId == s.Id).Select(
-            //         s => new InvoiceProductDTO
-            //         {
-            //             Id = s.Id,
-            //             InvoiceId = s.InvoiceId,
-            //             ItemTypeId = s.ItemTypeId,
-            //             Unit = s.Unit,
-            //             Rate = s.Rate,
-            //             Quantity = s.Quantity,
-            //             Total = s.Total,
-            //             Product = s.Product,
-            //             Service = s.Service,
-            //             IsProduct = s.IsProduct
-            //         }).ToList() )               
-            //     }
-            // ).OrderByDescending(x=>x.InvoiceNumber).ToListAsync();
             _logger.Log(LogLevel.Information, "Trying to fetch the list of Invoices from cache.");
             if (_cache.TryGetValue(cacheKey, out List<InvoiceDTO> List))
             {
@@ -163,28 +123,6 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertInvoice")]
         public async Task < HttpStatusCode > InsertInvoice(InvoiceDTO s) {
-            // var entity = new Invoice() {
-            //         Id = s.Id,
-            //         InvoiceNumber = s.InvoiceNumber,
-            //         InvoiceDate = s.InvoiceDate,
-            //         Term = s.Term,
-            //         DueDate = s.DueDate,
-            //         CompanyId = s.CompanyId,
-            //         CompanyName = s.CompanyName,
-            //         CompanyAddressLine1 = s.CompanyAddressLine1,
-            //         CompanyAddressLine2 = s.CompanyAddressLine2,
-            //         CompanyAddressLine3 = s.CompanyAddressLine3,
-            //         CompanyPhoneNumber = s.CompanyPhoneNumber,
-            //         CompanyEmailAddress = s.CompanyEmailAddress,
-            //         CustomerId = s.CustomerId,
-            //         CustomerName = s.CustomerName,
-            //         CustomerAddressLine1 = s.CustomerAddressLine1,
-            //         CustomerAddressLine2 = s.CustomerAddressLine2,
-            //         CustomerAddressLine3 = s.CustomerAddressLine3,
-            //         Status = "NEW",
-            //         NoteToCustomer = s.NoteToCustomer,
-            //         GetPaidNotes = s.GetPaidNotes
-            // };
             var entity = _mapper.Map<Invoice>(s);
             DBContext.Invoice.Add(entity);
             await DBContext.SaveChangesAsync();

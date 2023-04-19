@@ -33,19 +33,6 @@ namespace BVPortalApi.Controllers
         [HttpGet("GetEmpClientPerHourHistory")]
         public async Task<ActionResult<List<EmpClientPerHourHistoryDTO>>> Get()
         {
-        //     var List = await DBContext.EmpClientPerHourHistory.Select(
-        //         s => new EmpClientPerHourHistoryDTO
-        //         {
-        //             Id = s.Id,
-        //             EmployeeId = s.EmployeeId,
-        //             ClientId = s.ClientId,
-        //             OldPerHour = s.OldPerHour,
-        //             NewPerHour = s.NewPerHour,
-        //             ReasonForChange =s.ReasonForChange,
-        //             ChangeDate = s.ChangeDate,
-        //             ChangeBy = s.ChangeBy,
-        //         }
-        //     ).ToListAsync();
              _logger.Log(LogLevel.Information, "Trying to fetch the list of Employee Client Per Hours History from cache.");
             if (_cache.TryGetValue(cacheKey, out List<EmpClientPerHourHistoryDTO> List))
             {
@@ -77,15 +64,6 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertEmpClientPerHourHistory")]
         public async Task < HttpStatusCode > InsertEmpClientPerHourHistory(EmpClientPerHourHistoryDTO s) {
-            // var entity = new EmpClientPerHourHistory() {
-            //         EmployeeId = s.EmployeeId,
-            //         ClientId = s.ClientId,
-            //         OldPerHour = s.OldPerHour,
-            //         NewPerHour = s.NewPerHour,
-            //         ReasonForChange =s.ReasonForChange,
-            //         ChangeDate = s.ChangeDate,
-            //         ChangeBy = s.ChangeBy,
-            //     };
             var entity = _mapper.Map<EmpClientPerHourHistory>(s);
             DBContext.EmpClientPerHourHistory.Add(entity);
             await DBContext.SaveChangesAsync();

@@ -66,12 +66,6 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertAsset")]
         public async Task < HttpStatusCode > InsertAsset(AssetDTO s) {
-            // // var entity = new Asset() {
-            // //     Name = s.Name,
-            // //     TypeId = s.TypeId,
-            // //     ModelNumber = s.ModelNumber,
-            // //     Status = s.Status
-            // };
             var entity = _mapper.Map<Asset>(s);
             DBContext.Assets.Add(entity);
             await DBContext.SaveChangesAsync();
@@ -112,6 +106,11 @@ namespace BVPortalApi.Controllers
             await DBContext.SaveChangesAsync();
             _cache.Remove(cacheKey);
             return HttpStatusCode.OK;
+        }
+        [HttpGet("GetAssetCount")]
+        public ActionResult<int> GetAssetCount()
+        {
+            return  DBContext.Assets.Where(x=>x.Status.ToLower() == "active").Count();
         }
     }
 }

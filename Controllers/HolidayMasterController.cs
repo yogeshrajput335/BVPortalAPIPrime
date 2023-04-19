@@ -65,14 +65,6 @@ namespace BVPortalApi.Controllers
         [HttpPost("InsertHolidayMaster"), Authorize(Roles = "ADMIN")]
         public async Task<HttpStatusCode> InsertHolidayMaster(HolidayMasterDTO s)
         {
-            // var entity = new HolidayMaster()
-            // {
-            //     Id = s.Id,
-            //     HolidayName = s.HolidayName,
-            //     Description = s.Description,
-            //     Date = s.Date,
-            //     Status = s.Status
-            // };
             var entity = _mapper.Map<HolidayMaster>(s);
             DBContext.HolidayMaster.Add(entity);
             await DBContext.SaveChangesAsync();

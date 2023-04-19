@@ -35,15 +35,6 @@ namespace BVPortalApi.Controllers
         [HttpGet("GetPaymentOption")]
         public async Task<ActionResult<List<PaymentOptionDTO>>> Get()
         {
-            // var List = await DBContext.PaymentOption.Select(
-            //     s => new PaymentOptionDTO
-            //     {
-            //         Id = s.Id,
-            //         PaymentOptionName = s.PaymentOptionName,
-            //         Status = s.Status
-            //     }
-            // ).ToListAsync();
-            
             _logger.Log(LogLevel.Information, "Trying to fetch the list of Payment Options from cache.");
             if (_cache.TryGetValue(cacheKey, out List<PaymentOptionDTO> List))
             {
@@ -75,11 +66,6 @@ namespace BVPortalApi.Controllers
         [HttpPost("InsertPaymentOption")]
         public async Task<HttpStatusCode> InsertPaymentOption(PaymentOptionDTO s)
         {
-            // var entity = new PaymentOption()
-            // {
-            //     PaymentOptionName = s.PaymentOptionName,
-            //     Status = s.Status
-            // };
             var entity = _mapper.Map<PaymentOption>(s);
             DBContext.PaymentOption.Add(entity);
             await DBContext.SaveChangesAsync();

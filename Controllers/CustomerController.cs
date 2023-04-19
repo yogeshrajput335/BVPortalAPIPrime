@@ -36,20 +36,6 @@ namespace BVPortalApi.Controllers
         [HttpGet("GetCustomer")]
         public async Task<ActionResult<List<CustomerDTO>>> Get()
         {
-            // var List = await DBContext.Customer.Select(
-            //     s => new CustomerDTO
-            //     {
-            //         Id = s.Id,
-            //         CustomerName = s.CustomerName,
-            //         AddressLine1 = s.AddressLine1,
-            //         AddressLine2 = s.AddressLine2,
-            //         AddressLine3 = s.AddressLine3,
-            //         EmailAddress = s.EmailAddress,
-            //         PhoneNumber = s.PhoneNumber,
-            //         Term = s.Term,
-            //         Status = s.Status
-            //     }
-            // ).ToListAsync();
             _logger.Log(LogLevel.Information, "Trying to fetch the list of Customers from cache.");
             if (_cache.TryGetValue(cacheKey, out List<CustomerDTO> List))
             {
@@ -82,17 +68,6 @@ namespace BVPortalApi.Controllers
         [HttpPost("InsertCustomer")]
         public async Task<HttpStatusCode> InsertCustomer(CustomerDTO s)
         {
-            // var entity = new Customer()
-            // {
-            //     CustomerName = s.CustomerName,
-            //     AddressLine1 = s.AddressLine1,
-            //     AddressLine2 = s.AddressLine2,
-            //     AddressLine3 = s.AddressLine3,
-            //     EmailAddress = s.EmailAddress,
-            //     PhoneNumber = s.PhoneNumber,
-            //     Term = s.Term,
-            //     Status = s.Status
-            // };
             var entity = _mapper.Map<Customer>(s);
             DBContext.Customer.Add(entity);
             await DBContext.SaveChangesAsync();
@@ -147,6 +122,11 @@ namespace BVPortalApi.Controllers
             await DBContext.SaveChangesAsync();
             _cache.Remove(cacheKey);
             return HttpStatusCode.OK;
+        }
+        [HttpGet("GetCustomerCount")]
+        public ActionResult<int> GetCustomerCount()
+        {
+            return  DBContext.Customer.Where(x=>x.Status.ToLower() == "active").Count();
         }
     }
 }

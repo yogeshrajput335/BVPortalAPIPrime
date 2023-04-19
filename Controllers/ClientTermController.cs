@@ -32,15 +32,6 @@ namespace BVPortalApi.Controllers
          [HttpGet("GetClientTerm")]
         public async Task<ActionResult<List<ClientTermDTO>>> Get()
         {
-            // var List = await DBContext.ClientTerm.Select(
-            //     s => new ClientTermDTO
-            //     {
-            //         Id = s.Id,
-            //         ClientId = s.ClientId,
-            //         TermText = s.TermText,
-            //         Term = s.Term,
-            //     }
-            // ).ToListAsync();
             _logger.Log(LogLevel.Information, "Trying to fetch the list of Client Terms from cache.");
             if (_cache.TryGetValue(cacheKey, out List<ClientTermDTO> List))
             {
@@ -72,11 +63,6 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertClientTerm")]
         public async Task < HttpStatusCode > InsertClientTerm(ClientTermDTO s) {
-            // var entity = new ClientTerm() {
-            //         ClientId = s.ClientId,
-            //         TermText = s.TermText,
-            //         Term = s.Term,
-            // };
             var entity = _mapper.Map<ClientTerm>(s);
             DBContext.ClientTerm.Add(entity);
             await DBContext.SaveChangesAsync();
