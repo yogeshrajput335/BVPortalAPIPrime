@@ -25,7 +25,7 @@ namespace BVPortalApi.Controllers
         public EmpClientPerHourController(BVContext DBContext, IMemoryCache cache, ILogger<EmpClientPerHourController> logger, IMapper mapper)
         {
             this.DBContext = DBContext;
-             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _mapper = mapper;
         }
@@ -33,15 +33,6 @@ namespace BVPortalApi.Controllers
         [HttpGet("GetEmpClientPerHour")]
         public async Task<ActionResult<List<EmpClientPerHourDTO>>> Get()
         {
-            // var List = await DBContext.EmpClientPerHour.Select(
-            //     s => new EmpClientPerHourDTO
-            //     {
-            //         Id = s.Id,
-            //         EmployeeId = s.EmployeeId,
-            //         ClientId = s.ClientId,
-            //         PerHour = s.PerHour,
-            //     }
-            // ).ToListAsync();
              _logger.Log(LogLevel.Information, "Trying to fetch the list of Employee Client Per Hours from cache.");
             if (_cache.TryGetValue(cacheKey, out List<EmpClientPerHourDTO> List))
             {
@@ -74,11 +65,6 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertEmpClientPerHour")]
         public async Task < HttpStatusCode > InsertEmpClientPerHour(EmpClientPerHourDTO s) {
-            // var entity = new EmpClientPerHour() {
-            //         EmployeeId = s.EmployeeId,
-            //         ClientId = s.ClientId,
-            //         PerHour = s.PerHour,
-            //     };
             var entity = _mapper.Map<EmpClientPerHour>(s);
             DBContext.EmpClientPerHour.Add(entity);
             await DBContext.SaveChangesAsync();

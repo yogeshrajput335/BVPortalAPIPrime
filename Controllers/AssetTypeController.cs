@@ -43,15 +43,6 @@ namespace BVPortalApi.Controllers
             {
                 _logger.Log(LogLevel.Information, "Asset type list not found in cache. Fetching from database.");
                 List = _mapper.Map<List<AssetTypeDTO>>(await DBContext.AssetType.ToListAsync());
-                // List = await DBContext.AssetType.Select(
-                //     s => new AssetTypeDTO
-                //     {
-                //         Id = s.Id,
-                //         Name = s.Name,
-                //         Description = s.Description,
-                //         Status = s.Status
-                //     }
-                // ).ToListAsync();
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                         .SetSlidingExpiration(TimeSpan.FromSeconds(60))
                         .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
@@ -73,11 +64,6 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertAssetType")]
         public async Task < HttpStatusCode > InsertAssetType(AssetTypeDTO s) {
-            // var entity = new AssetType() {
-            //     Name = s.Name,
-            //     Description = s.Description,
-            //     Status = s.Status
-            // };
             var entity = _mapper.Map<AssetType>(s);
             DBContext.AssetType.Add(entity);
             await DBContext.SaveChangesAsync();

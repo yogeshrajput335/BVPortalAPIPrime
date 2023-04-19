@@ -35,16 +35,6 @@ namespace BVPortalApi.Controllers
         [HttpGet("GetService")]
         public async Task<ActionResult<List<ServiceDTO>>> Get()
          {
-        //     var List = await DBContext.Service.Select(
-        //         s => new ServiceDTO
-        //         {
-        //             Id = s.Id,
-        //             ServiceName = s.ServiceName,
-        //             Unit = s.Unit,
-        //             Rate = s.Rate,
-        //             Status = s.Status
-        //         }
-        //     ).ToListAsync();
          _logger.Log(LogLevel.Information, "Trying to fetch the list of Services from cache.");
             if (_cache.TryGetValue(cacheKey, out List<ServiceDTO> List))
             {
@@ -76,12 +66,6 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertService")]
         public async Task < HttpStatusCode > InsertService(ServiceDTO s) {
-            // var entity = new Service() {
-            //      ServiceName = s.ServiceName,
-            //         Unit = s.Unit,
-            //         Rate = s.Rate,
-            //         Status = s.Status
-            // };
             var entity = _mapper.Map<Service>(s);
             DBContext.Service.Add(entity);
             await DBContext.SaveChangesAsync();

@@ -34,18 +34,6 @@ namespace BVPortalApi.Controllers
         [HttpGet("GetOpenjobs"), Authorize(Roles = "EMPLOYEE,ADMIN")]
         public async Task<ActionResult<List<OpenjobsDTO>>> Get()
         {
-            // var List = await DBContext.Openjobs.Where(x=>x.Status=="ACTIVE").Select(
-            //     s => new OpenjobsDTO
-            //     {
-            //         Id = s.Id,
-            //         JobName = s.JobName,
-            //         Profile = s.Profile,
-            //         Description = s.Description,
-            //         StartDate = s.StartDate,
-            //         Country = s.Country,
-            //         Status = s.Status
-            //     }
-            // ).ToListAsync();
             _logger.Log(LogLevel.Information, "Trying to fetch the list of Openjobs from cache.");
             if (_cache.TryGetValue(cacheKey, out List<OpenjobsDTO> List))
             {
@@ -112,14 +100,6 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertOpenjobs"), Authorize(Roles = "ADMIN")]
         public async Task < HttpStatusCode > InsertOpenjobs(OpenjobsDTO s) {
-            // var entity = new Openjobs() {
-            //     JobName = s.JobName,
-            //     Description = s.Description,
-            //     Profile = s.Profile,
-            //     StartDate = s.StartDate,
-            //     Country = s.Country,
-            //     Status = s.Status
-            // };
             var entity = _mapper.Map<Openjobs>(s);
             DBContext.Openjobs.Add(entity);
             await DBContext.SaveChangesAsync();
@@ -166,8 +146,6 @@ namespace BVPortalApi.Controllers
         [HttpPost("ApplyJob"), Authorize(Roles = "EMPLOYEE")]
         public async Task < HttpStatusCode > ApplyJob(ApplyJobDTO s) {
             var emp = DBContext.Employee.Where(x=>x.Id==s.EmployeeId).FirstOrDefault();
-            //  : Add jobid in candidate  
-                
             
            var entity = new Candidate() {
                     JobId = s.JobId,

@@ -34,17 +34,6 @@ namespace BVPortalApi.Controllers
         [HttpGet("GetReferList")]
         public async Task<ActionResult<List<ReferListDTO>>> Get()
         {
-            // var List = await DBContext.ReferList.Select(
-            //     s => new ReferListDTO
-            //     {
-            //         Id = s.Id,
-            //         FirstName = s.FirstName,
-            //         LastName = s.LastName,
-            //         PhoneNo = s.PhoneNo,
-            //         Email = s.Email,
-            //         Status = s.Status
-            //     }
-            // ).ToListAsync();
             _logger.Log(LogLevel.Information, "Trying to fetch the list of ReferList from cache.");
             if (_cache.TryGetValue(cacheKey, out List<ReferListDTO> List))
             {
@@ -76,13 +65,6 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertReferList")]
         public async Task < HttpStatusCode > InsertReferList(ReferListDTO s) {
-            // var entity = new ReferList() {
-            //         FirstName = s.FirstName,
-            //         LastName = s.LastName,
-            //         PhoneNo = s.PhoneNo,
-            //         Email = s.Email,
-            //         Status = s.Status
-            // };
              var entity = _mapper.Map<ReferList>(s);
             DBContext.ReferList.Add(entity);
             await DBContext.SaveChangesAsync();

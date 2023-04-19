@@ -35,15 +35,6 @@ namespace BVPortalApi.Controllers
         [HttpGet("GetLeaveTypes")]
         public async Task<ActionResult<List<LeaveTypeDTO>>> Get()
         {
-            // var List = await DBContext.LeaveType.Select(
-            //     s => new LeaveTypeDTO
-            //     {
-            //         Id = s.Id,
-            //         Type = s.Type,
-            //         Description = s.Description,
-            //         Status = s.Status
-            //     }
-            // ).ToListAsync();
             _logger.Log(LogLevel.Information, "Trying to fetch the list of Leave Types from cache.");
             if (_cache.TryGetValue(cacheKey, out List<LeaveTypeDTO> List))
             {
@@ -75,11 +66,6 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertLeaveType")]
         public async Task < HttpStatusCode > InsertLeaveType(LeaveTypeDTO s) {
-            // var entity = new LeaveType() {
-            //     Type = s.Type,
-            //     Description = s.Description,
-            //     Status = s.Status
-            // };
             var entity = _mapper.Map<LeaveType>(s);
             DBContext.LeaveType.Add(entity);
             await DBContext.SaveChangesAsync();

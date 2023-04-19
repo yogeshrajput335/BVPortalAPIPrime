@@ -33,25 +33,6 @@ namespace BVPortalApi.Controllers
         [HttpGet("GetEmployeeBasicInfo")]
         public async Task<ActionResult<List<EmployeeBasicInfoDTO>>> GetEmployeeBasicInfo()
         {
-            // var List = await DBContext.EmployeeBasicInfo.Select(
-            //     s => new EmployeeBasicInfoDTO
-            //     {
-            //         Id = s.Id,
-            //         EmployeeName = s.Employee.FirstName + " "+ s.Employee.LastName,
-            //         FatherName = s.FatherName,
-            //         MotherName = s.MotherName,
-            //         BloodGroup = s.BloodGroup,
-            //         PersonalEmailId = s.PersonalEmailId,
-            //         DateOfBirth = s.DateOfBirth,
-            //         IsMarried = s.IsMarried,
-            //         MaritalStatus = s.MaritalStatus,
-            //         SpouseName = s.SpouseName,
-            //         PermanentAddress = s.PermanentAddress,
-            //         IsBothAddressSame = s.IsBothAddressSame,
-            //         CurrentAddress = s.CurrentAddress,
-            //         Gender = s.Gender
-            //     }
-            // ).ToListAsync();
              _logger.Log(LogLevel.Information, "Trying to fetch the list of Employee Basic Info from cache.");
             if (_cache.TryGetValue(cacheKey, out List<EmployeeBasicInfoDTO> List))
             {
@@ -117,21 +98,6 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertEmployeeBasicInfo")]
         public async Task < HttpStatusCode > InsertEmployeeBasicInfo(EmployeeBasicInfoDTO s) {
-            // var entity = new EmployeeBasicInfo() {
-            //         EmployeeId = s.EmployeeId,
-            //         FatherName = s.FatherName,
-            //         MotherName = s.MotherName,
-            //         BloodGroup = s.BloodGroup,
-            //         PersonalEmailId = s.PersonalEmailId,
-            //         DateOfBirth = s.DateOfBirth,
-            //         IsMarried = s.IsMarried,
-            //         MaritalStatus = s.MaritalStatus,
-            //         SpouseName = s.SpouseName,
-            //         PermanentAddress = s.PermanentAddress,
-            //         IsBothAddressSame = s.IsBothAddressSame,
-            //         CurrentAddress = s.CurrentAddress,
-            //         Gender = s.Gender
-            // };
             var entity = _mapper.Map<EmployeeBasicInfo>(s);
             DBContext.EmployeeBasicInfo.Add(entity);
             await DBContext.SaveChangesAsync();

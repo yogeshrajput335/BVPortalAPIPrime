@@ -34,20 +34,6 @@ namespace BVPortalApi.Controllers
         [HttpGet("GetLeave")]
         public async Task<ActionResult<List<LeaveDTO>>> Get()
         {
-            // var List = await DBContext.Leave.Select(
-            //     s => new LeaveDTO
-            //     {
-            //     Id=s.Id,
-            //     EmployeeId = s.EmployeeId,
-            //     FullName = s.Employee.FirstName+" "+s.Employee.LastName,
-            //     LeaveTypeId=s.LeaveTypeId,
-            //     LeaveType =s.LeaveType.Type,
-            //     FromDate=s.FromDate,
-            //     ToDate=s.ToDate,
-            //     Reason = s.Reason,
-            //     Status = s.Status
-            //     }
-            // ).ToListAsync();
              _logger.Log(LogLevel.Information, "Trying to fetch the list of Leaves from cache.");
             if (_cache.TryGetValue(cacheKey, out List<LeaveDTO> List))
             {
@@ -80,14 +66,6 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertLeave")]
         public async Task < HttpStatusCode > InsertLeave(LeaveDTO s) {
-            // var entity = new Leave() {
-            //     EmployeeId = s.EmployeeId,
-            //     LeaveTypeId=s.LeaveTypeId,
-            //     FromDate=s.FromDate,
-            //     ToDate=s.ToDate,
-            //     Reason = s.Reason,
-            //     Status = s.Status
-            // };
             var entity = _mapper.Map<Leave>(s);
             DBContext.Leave.Add(entity);
             await DBContext.SaveChangesAsync();

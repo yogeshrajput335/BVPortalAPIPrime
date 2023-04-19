@@ -34,32 +34,6 @@ namespace BVPortalApi.Controllers
         [HttpGet("GetCandidates")]
         public async Task<ActionResult<List<CandidateDTO>>> Get()
         {
-            // var List = await DBContext.Candidates.Select(
-            //     s => new CandidateDTO
-            //     {
-            //         Id = s.Id,
-            //         FirstName = s.FirstName,
-            //         LastName = s.LastName,
-            //         Name = s.LastName+", "+s.FirstName,
-            //         PhoneNo = s.PhoneNo,
-            //         Email=s.Email,
-            //         Status = s.Status,
-            //         ReferBy = s.ReferBy,
-            //         ReferByName = s.Employee.FirstName + " "+s.Employee.LastName,
-            //         JobId = s.JobId,
-            //         JobName = s.Openjobs.JobName,
-            //         Technology = s.Technology,
-            //         Visa = s.Visa,
-            //         Rate = s.Rate,
-            //         Client = s.Client,
-            //         ClientContact = s.ClientContact,
-            //         ClientMail = s.ClientMail,
-            //         Vendor = s.Vendor,
-            //         VendorContact = s.VendorContact,
-            //         VendorMail = s.VendorMail,
-            //         CreatedDate = s.CreatedDate
-            //     }
-            // ).ToListAsync();
              _logger.Log(LogLevel.Information, "Trying to fetch the list of candidates from cache.");
             if (_cache.TryGetValue(cacheKey, out List<CandidateDTO> List))
             {
@@ -91,25 +65,6 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertCandidate")]
         public async Task < HttpStatusCode > InsertCandidate(CandidateDTO s) {
-            // var entity = new Candidate() {
-            //         Id = s.Id,
-            //         FirstName = s.FirstName,
-            //         LastName = s.LastName,
-            //         PhoneNo = s.PhoneNo,
-            //         Email=s.Email,
-            //         Status = s.Status,
-            //         ReferBy = s.ReferBy,
-            //         Technology = s.Technology,
-            //         Visa = s.Visa,
-            //         Rate = s.Rate,
-            //         Client = s.Client,
-            //         ClientContact = s.ClientContact,
-            //         ClientMail = s.ClientMail,
-            //         Vendor = s.Vendor,
-            //         VendorContact = s.VendorContact,
-            //         VendorMail = s.VendorMail,
-            //         CreatedDate = s.CreatedDate
-            // };
             var entity = _mapper.Map<Candidate>(s);
             DBContext.Candidates.Add(entity);
             await DBContext.SaveChangesAsync();
@@ -161,6 +116,12 @@ namespace BVPortalApi.Controllers
             await DBContext.SaveChangesAsync();
             _cache.Remove(cacheKey);
             return HttpStatusCode.OK;
+        }
+        
+        [HttpGet("GetCandidateCount")]
+        public ActionResult<int> GetCandidateCount()
+        {
+            return  DBContext.Candidates.Where(x=>x.Status.ToLower() == "active").Count();
         }
     }
 }

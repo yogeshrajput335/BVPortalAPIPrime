@@ -81,15 +81,6 @@ namespace BVPortalApi.Controllers
         [HttpPost("InsertClient")]
         public async Task<HttpStatusCode> InsertClient(ClientDTO s)
         {
-            // var entity = new Client()
-            // {
-            //     ClientName = s.ClientName,
-            //     ContactPerson = s.ContactPerson,
-            //     Email = s.Email,
-            //     PhoneNumber = s.PhoneNumber,
-            //     Address = s.Address,
-            //     Status = s.Status
-            // };
             var entity = _mapper.Map<Client>(s);
             DBContext.Client.Add(entity);
             await DBContext.SaveChangesAsync();
@@ -174,6 +165,11 @@ namespace BVPortalApi.Controllers
             {
                 return List;
             }
+        }
+         [HttpGet("GetClientCount")]
+        public ActionResult<int> GetClientCount()
+        {
+            return  DBContext.Client.Where(x=>x.Status.ToLower() == "active").Count();
         }
     }
 }

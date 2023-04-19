@@ -65,14 +65,6 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertAssetAllocation")]
         public async Task < HttpStatusCode > InsertAssetAllocation(AssetAllocationDTO s) {
-            // var entity = new AssetAllocation() {
-            //         AssetId = s.AssetId,
-            //         AllocatedById = s.AllocatedById,
-            //         AllocatedToId = s.AllocatedToId,
-            //         AllocatedDate = s.AllocatedDate,
-            //         ReturnDate=s.ReturnDate,
-            //         Status = s.Status
-            // };
             var entity = _mapper.Map<AssetAllocation>(s);
             DBContext.AssetAllocation.Add(entity);
             await DBContext.SaveChangesAsync();

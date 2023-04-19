@@ -35,16 +35,6 @@ namespace BVPortalApi.Controllers
         [HttpGet("GetProduct")]
         public async Task<ActionResult<List<ProductDTO>>> Get()
         {
-            // var List = await DBContext.Product.Select(
-            //     s => new ProductDTO
-            //     {
-            //         Id = s.Id,
-            //         ProductName = s.ProductName,
-            //         Unit = s.Unit,
-            //         Rate = s.Rate,
-            //         Status = s.Status
-            //     }
-            // ).ToListAsync();
             _logger.Log(LogLevel.Information, "Trying to fetch the list of Products from cache.");
             if (_cache.TryGetValue(cacheKey, out List<ProductDTO> List))
             {
@@ -76,13 +66,6 @@ namespace BVPortalApi.Controllers
         [HttpPost("InsertProduct")]
         public async Task<HttpStatusCode> InsertProduct(ProductDTO s)
         {
-            // var entity = new Product()
-            // {
-            //     ProductName = s.ProductName,
-            //     Unit = s.Unit,
-            //     Rate = s.Rate,
-            //     Status = s.Status
-            // };
             var entity = _mapper.Map<Product>(s);
             DBContext.Product.Add(entity);
             await DBContext.SaveChangesAsync();
@@ -126,6 +109,11 @@ namespace BVPortalApi.Controllers
             await DBContext.SaveChangesAsync();
             _cache.Remove(cacheKey);
             return HttpStatusCode.OK;
+        }
+         [HttpGet("GetProductCount")]
+        public ActionResult<int> GetProductCount()
+        {
+            return  DBContext.Product.Where(x=>x.Status.ToLower() == "active").Count();
         }
     }
 }

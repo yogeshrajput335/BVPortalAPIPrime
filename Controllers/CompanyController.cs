@@ -35,20 +35,6 @@ namespace BVPortalApi.Controllers
         [HttpGet("GetCompany")]
         public async Task<ActionResult<List<CompanyDTO>>> Get()
         {
-            // var List = await DBContext.Company.Select(
-            //     s => new CompanyDTO
-            //     {
-            //         Id = s.Id,
-            //         CompanyName = s.CompanyName,
-            //         AddressLine1 = s.AddressLine1,
-            //         AddressLine2 = s.AddressLine2,
-            //         AddressLine3 = s.AddressLine3,
-            //         EmailAddress = s.EmailAddress,
-            //         PhoneNumber = s.PhoneNumber,
-            //         CompanyLogo = s.CompanyLogo,
-            //         Status = s.Status
-            //     }
-            // ).ToListAsync();
              _logger.Log(LogLevel.Information, "Trying to fetch the list of companies from cache.");
             if (_cache.TryGetValue(cacheKey, out List<CompanyDTO> List))
             {
@@ -79,16 +65,6 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertCompany")]
         public async Task < HttpStatusCode > InsertCompany(CompanyDTO s) {
-            // var entity = new Company() {
-            //     CompanyName = s.CompanyName,
-            //     AddressLine1 = s.AddressLine1,
-            //     AddressLine2 = s.AddressLine2,
-            //     AddressLine3 = s.AddressLine3,
-            //     EmailAddress = s.EmailAddress,
-            //     PhoneNumber = s.PhoneNumber,
-            //     CompanyLogo = s.CompanyLogo,
-            //     Status = s.Status
-            // };
             var entity = _mapper.Map<Company>(s);
             DBContext.Company.Add(entity);
             await DBContext.SaveChangesAsync();

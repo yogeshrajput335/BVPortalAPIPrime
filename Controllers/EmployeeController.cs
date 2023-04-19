@@ -34,19 +34,6 @@ namespace BVPortalApi.Controllers
         [HttpGet("GetEmployee")]
         public async Task<ActionResult<List<EmployeeDTO>>> Get()
         {
-            // var List = await DBContext.Employee.Select(
-            //     s => new EmployeeDTO
-            //     {
-            //         Id = s.Id,
-            //         FirstName = s.FirstName,
-            //         LastName = s.LastName,
-            //         Email = s.Email,
-            //         PhoneNumber = s.PhoneNumber,
-            //         EmployeeType = s.EmployeeType,
-            //         Status = s.Status,
-            //         FullName = s.LastName+", "+s.FirstName,
-            //     }
-            // ).ToListAsync();
              _logger.Log(LogLevel.Information, "Trying to fetch the list of Employees from cache.");
             if (_cache.TryGetValue(cacheKey, out List<EmployeeDTO> List))
             {
@@ -77,14 +64,6 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertEmployee")]
         public async Task < HttpStatusCode > InsertEmployee(EmployeeDTO s) {
-            // var entity = new Employee() {
-            //         FirstName = s.FirstName,
-            //         LastName = s.LastName,
-            //         Email = s.Email,
-            //         PhoneNumber = s.PhoneNumber,
-            //         EmployeeType = s.EmployeeType,
-            //         Status = s.Status
-            // };
             var entity = _mapper.Map<Employee>(s);
             DBContext.Employee.Add(entity);
             await DBContext.SaveChangesAsync();
@@ -241,6 +220,5 @@ namespace BVPortalApi.Controllers
         {
             return  DBContext.Employee.Where(x=>x.Status.ToLower() == "active").Count();
         }
-
     }
 }

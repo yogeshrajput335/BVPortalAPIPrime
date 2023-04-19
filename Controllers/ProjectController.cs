@@ -33,20 +33,6 @@ namespace BVPortalApi.Controllers
         [HttpGet("GetProjects")]
         public async Task<ActionResult<List<ProjectDTO>>> Get()
         {
-            // var List = await DBContext.Project.Select(
-            //     s => new ProjectDTO
-            //     {
-            //         Id = s.Id,
-            //         ProjectName = s.ProjectName,
-            //         ClientId = s.ClientId,
-            //         ClientName = s.Client.ClientName,
-            //         Description = s.Description,
-            //         StartDate =s.StartDate,
-            //         EndDate = s.EndDate,
-            //         ProjectType = s.ProjectType,
-            //         Status = s.Status
-            //     }
-            // ).ToListAsync();
              _logger.Log(LogLevel.Information, "Trying to fetch the list of Projects from cache.");
             if (_cache.TryGetValue(cacheKey, out List<ProjectDTO> List))
             {
@@ -78,16 +64,6 @@ namespace BVPortalApi.Controllers
 
         [HttpPost("InsertProject")]
         public async Task < HttpStatusCode > InsertProject(ProjectDTO s) {
-            // var entity = new Project() {
-            //          Id = s.Id,
-            //         ProjectName = s.ProjectName,
-            //         ClientId = s.ClientId,
-            //         Description = s.Description,
-            //         StartDate =s.StartDate,
-            //         EndDate = s.EndDate,
-            //         ProjectType = s.ProjectType,
-            //         Status = s.Status
-            // };
             var entity = _mapper.Map<Project>(s);
             DBContext.Project.Add(entity);
             await DBContext.SaveChangesAsync();
@@ -120,6 +96,11 @@ namespace BVPortalApi.Controllers
             await DBContext.SaveChangesAsync();
             _cache.Remove(cacheKey);
             return HttpStatusCode.OK;
+        }
+         [HttpGet("GetProjectCount")]
+        public ActionResult<int> GetProjectCount()
+        {
+            return  DBContext.Project.Where(x=>x.Status.ToLower() == "active").Count();
         }
     }
 }
